@@ -1,0 +1,8 @@
+run:
+    npm run start:dev
+
+create-module name:
+    nest g module {{name}}
+    nest g controller {{name}}
+    nest g service {{name}}
+
