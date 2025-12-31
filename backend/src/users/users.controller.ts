@@ -5,8 +5,5 @@ import { UsersService } from './users.service';
 export class UsersController {
 
     constructor(private userService:UsersService){}   
-    @Get('port')
-    getPort() {    
-        return this.userService.logPort();
-    }
+
 }
