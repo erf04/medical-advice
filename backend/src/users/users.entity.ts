@@ -1,5 +1,6 @@
 import { Exclude } from "class-transformer";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { SignUpDto } from "../auth/auth.dto";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -32,4 +33,15 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  static fromSignUpDto(dto: SignUpDto): User {
+    const user = new User();
+    user.firstName = dto.first_name;
+    user.lastName = dto.last_name;
+    user.phone = dto.phone;
+    user.email = dto.email;
+    user.role = dto.role as UserRole;
+    user.password = dto.password;
+    return user;
+  }
 }

@@ -16,5 +16,9 @@ export class UsersService {
 
     async findOneByPhone(phoneNumber:string){ 
         return this.userRepository.findOneBy({phone:phoneNumber});
-    }   
+    }
+    
+    async save(user:User) { 
+        return this.userRepository.save(user);
+    }
 }

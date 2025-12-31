@@ -4,6 +4,7 @@ import { User } from '../users/users.entity';
 import { UserOut } from '../users/user.dto';
 import { plainToInstance } from 'class-transformer';
 import { JwtService } from '@nestjs/jwt';
+import { SignUpDto } from './auth.dto';
 
 @Injectable()
 @Global()
@@ -27,6 +28,11 @@ export class AuthService {
         return {
             accessToken : await this.jwtService.signAsync(payload)
         }
+    }
+
+    async singUp(data:SignUpDto) {
+        const user =  User.fromSignUpDto(data);
+        return this.userService.save(user);
     }
 
 
