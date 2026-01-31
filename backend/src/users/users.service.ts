@@ -7,6 +7,7 @@ import { UserOut } from './user.dto';
 
 
 @Injectable()
+@Global()
 export class UsersService {
     constructor(
         private configService:ConfigService,

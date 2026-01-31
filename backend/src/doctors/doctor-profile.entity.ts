@@ -14,12 +14,6 @@ export class DoctorProfile {
   @JoinColumn()
   user: User;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
   @Column({ unique: true })
   medicalCode: string;
 

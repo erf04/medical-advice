@@ -1,17 +1,19 @@
-import { Global, HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Global, HttpException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { User } from '../users/users.entity';
+import { User, UserRole } from '../users/users.entity';
 import { UserOut } from '../users/user.dto';
 import { plainToInstance } from 'class-transformer';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './auth.dto';
+import { DoctorsService } from '../doctors/doctors.service';
+import { PatientsService } from '../patients/patients.service';
 
 @Injectable()
 @Global()
 export class AuthService {
     constructor(
         private userService:UsersService,
-        private jwtService:JwtService
+        private jwtService:JwtService,
     ){}
 
     async signIn(phoneNumber:string ,password:string ){
@@ -26,13 +28,26 @@ export class AuthService {
         }
         // return plainToInstance(UserOut,User,{excludeExtraneousValues:true});
         return {
-            accessToken : await this.jwtService.signAsync(payload)
+            accessToken : await this.jwtService.signAsync(payload),
+            role: user.role,
+            hasProfile: this.hasProfile(user),
         }
     }
 
     async singUp(data:SignUpDto) {
+        const exists = await this.userService.findOneByPhone(data.phone.trim());
+
+        if (exists) {
+            throw new BadRequestException('Phone already registered');
+        }
         const user =  User.fromSignUpDto(data);
         return this.userService.save(user);
+    }
+
+    private hasProfile(user: User): boolean {
+        if (user.role === UserRole.DOCTOR) return !!user.doctorProfile;
+        if (user.role === UserRole.PATIENT) return !!user.patientProfile;
+        return true;
     }
 
 

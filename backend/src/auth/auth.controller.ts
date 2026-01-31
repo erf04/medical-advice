@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards }
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { AuthGuard } from './auth.guard';
-import { User } from './auth.decorator';
+import { GetUser } from './auth.decorator';
 import { UserOut } from '../users/user.dto';
 
 @Controller('auth')
@@ -19,7 +19,7 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('profile')
-    getProfile(@User() user : UserOut) : UserOut {
+    getProfile(@GetUser() user : UserOut) : UserOut {
         return user;
     }
 
