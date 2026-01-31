@@ -19,7 +19,6 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('profile')
-
     getProfile(@User() user : UserOut) : UserOut {
         return user;
     }

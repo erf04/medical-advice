@@ -1,0 +1,37 @@
+
+import {
+  Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToMany
+} from 'typeorm';
+import { User } from '../users/users.entity';
+import { Category } from '../categories/category.entity';
+
+@Entity()
+export class DoctorProfile {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
+
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column({ unique: true })
+  medicalCode: string;
+
+  @Column()
+  contactInfo: string;
+
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column({ default: 1 })
+  maxConcurrentConsultations: number;
+
+  @ManyToMany(() => Category, (c) => c.doctors)
+  categories: Category[];
+}

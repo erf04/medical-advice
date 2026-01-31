@@ -1,6 +1,8 @@
 import { Exclude } from "class-transformer";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { SignUpDto } from "../auth/auth.dto";
+import { DoctorProfile } from "../doctors/doctor-profile.entity";
+import { PatientProfile } from "../patients/patient-profile.entity";
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -30,6 +32,12 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole })
   role: UserRole;
+
+  @OneToOne(() => DoctorProfile, (d) => d.user)
+  doctorProfile: DoctorProfile;
+
+  @OneToOne(() => PatientProfile, (p) => p.user)
+  patientProfile: PatientProfile;
 
   @CreateDateColumn()
   createdAt: Date;
