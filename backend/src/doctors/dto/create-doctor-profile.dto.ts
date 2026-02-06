@@ -14,4 +14,9 @@ export class CreateDoctorProfileDto {
   @Min(1)
   @IsOptional()
   maxConcurrentConsultations?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  consultationPrice?: number;
 }

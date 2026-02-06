@@ -10,15 +10,18 @@ import { UsersService } from '../users/users.service';
 import { DoctorSchedule } from './doctor-schedule.entity';
 import { DoctorScheduleController } from './doctor-schedule.controller';
 import { DoctorScheduleService } from './doctor-schedule.service';
+import { DoctorDashboardController } from './doctor-dashboard.controller';
+import { DoctorDashboardService } from './doctor-dashboard.service';
+import { Consultation } from '../consultations/consultation.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([DoctorProfile]),
+    TypeOrmModule.forFeature([DoctorProfile,Consultation]),
     TypeOrmModule.forFeature([DoctorSchedule]),
     forwardRef(()=> AuthModule)
   ],
-  controllers: [DoctorsController,DoctorScheduleController],
-  providers: [DoctorsService,DoctorScheduleService],
+  controllers: [DoctorsController,DoctorScheduleController,DoctorDashboardController],
+  providers: [DoctorsService,DoctorScheduleService,DoctorDashboardService],
   exports:[DoctorsService]
 })
 export class DoctorsModule {}

@@ -1,9 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConsultationsController } from './consultations.controller';
-import { ConsultationsService } from './consultations.service';
+import { ConsultationService } from './consultations.service';
+import { Consultation } from './consultation.entity';
+import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
+import { DoctorProfile } from '../doctors/doctor-profile.entity';
+import { PatientProfile } from '../patients/patient-profile.entity';
+import { DoctorSchedule } from '../doctors/doctor-schedule.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
+  imports:[
+    TypeOrmModule.forFeature([Consultation,DoctorProfile,PatientProfile,DoctorSchedule]),
+    AuthModule
+  ],
   controllers: [ConsultationsController],
-  providers: [ConsultationsService]
+  providers: [ConsultationService]
 })
 export class ConsultationsModule {}

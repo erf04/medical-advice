@@ -25,7 +25,13 @@ export class Consultation {
   @ManyToOne(() => PatientProfile)
   patient: PatientProfile;
 
-  @Column({ type: 'enum', enum: ConsultationStatus })
+  @Column()
+  subject: string;
+
+  @Column('text')
+  description: string;
+
+  @Column({ type: 'enum', enum: ConsultationStatus ,default: ConsultationStatus.PENDING})
   status: ConsultationStatus;
 
   @Column()
