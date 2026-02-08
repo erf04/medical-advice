@@ -41,7 +41,14 @@ export class AuthService {
             throw new BadRequestException('Phone already registered');
         }
         const user =  User.fromSignUpDto(data);
-        return this.userService.save(user);
+        const savedUser = await this.userService.save(user);
+        return {
+            user: plainToInstance(UserOut, savedUser, {excludeExtraneousValues:true}),
+            accessToken: await this.jwtService.signAsync({
+                sub: savedUser.id,
+                phoneNumber: savedUser.phone
+            }),
+        };
     }
 
     private hasProfile(user: User): boolean {

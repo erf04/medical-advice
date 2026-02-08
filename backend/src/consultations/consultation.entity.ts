@@ -1,9 +1,10 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { DoctorProfile } from "../doctors/doctor-profile.entity";
 import { PatientProfile } from "../patients/patient-profile.entity";
 
 // src/consultations/consultation.entity.ts
 @Entity()
+@Index(['doctor', 'reservedDate', 'startTime', 'endTime'])
 export class Consultation {
   @PrimaryGeneratedColumn()
   id: number;

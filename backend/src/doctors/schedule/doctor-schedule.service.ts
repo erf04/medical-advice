@@ -6,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 import { DoctorSchedule } from './doctor-schedule.entity';
-import { DoctorProfile } from './doctor-profile.entity';
-import { SetDoctorScheduleDto } from './dto/set-doctor-schedule.dto';
-import { User } from '../users/users.entity';
-import { DoctorsService } from './doctors.service';
-import { Consultation } from '../consultations/consultation.entity';
-import dayjs from '../common/dayjs';
+import { DoctorProfile } from '../doctor-profile.entity';
+import { SetDoctorScheduleDto } from '../dto/set-doctor-schedule.dto';
+import { User } from '../../users/users.entity';
+import { DoctorsService } from '../doctors.service';
+import { Consultation } from '../../consultations/consultation.entity';
+import dayjs from '../../common/dayjs';
 import { log } from 'console';
 
 
@@ -123,7 +123,6 @@ export class DoctorScheduleService {
       .calendar('jalali')
       .toDate();
 
-    log('from', from, 'to', to);
     const result: any[] = [];
     let date = dayjs(from);
 
@@ -132,7 +131,6 @@ export class DoctorScheduleService {
         doctorId,
         date.format('YYYY-MM-DD'),
       );
-      log('date', date.format('YYYY-MM-DD'), 'slots', slots.length);
       result.push({
         date: date.format('YYYY/MM/DD'),
         availableSlots: slots.length,
@@ -158,8 +156,6 @@ export class DoctorScheduleService {
     .toDate();
     const dayOfWeek = dayjs(reservedDate).day();
 
-    log('doctorId', doctorId, 'date', reservedDate, 'dayOfWeek', dayOfWeek);
-
     const schedules = await this.scheduleRepo.find({
       where: {
         doctor: { id: doctorId },
@@ -168,7 +164,7 @@ export class DoctorScheduleService {
       order: { startTime: 'ASC' },
     });
 
-    log('schedules', schedules);
+    // log('schedules', schedules);
 
     if (!schedules.length) return [];
 

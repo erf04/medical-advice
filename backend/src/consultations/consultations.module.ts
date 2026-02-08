@@ -5,7 +5,7 @@ import { Consultation } from './consultation.entity';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { DoctorProfile } from '../doctors/doctor-profile.entity';
 import { PatientProfile } from '../patients/patient-profile.entity';
-import { DoctorSchedule } from '../doctors/doctor-schedule.entity';
+import { DoctorSchedule } from '../doctors/schedule/doctor-schedule.entity';
 import { AuthModule } from '../auth/auth.module';
 import { DoctorsModule } from '../doctors/doctors.module';
 import { PatientsModule } from '../patients/patients.module';
@@ -16,7 +16,7 @@ import { PatientsModule } from '../patients/patients.module';
     AuthModule,
     DoctorsModule,
     PatientsModule,
-    
+
   ],
   controllers: [ConsultationsController],
   providers: [ConsultationService]

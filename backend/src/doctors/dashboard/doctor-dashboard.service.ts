@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Consultation } from '../../consultations/consultation.entity';
+import { DoctorProfile } from '../doctor-profile.entity';
 
-import { Consultation } from '../consultations/consultation.entity';
-import { DoctorProfile } from '../doctors/doctor-profile.entity';
+
 
 @Injectable()
 export class DoctorDashboardService {

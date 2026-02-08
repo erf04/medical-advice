@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
-import { DoctorScheduleService } from "./doctor-schedule.service";
+import { DoctorScheduleService } from "./schedule/doctor-schedule.service";
 import dayjs from "../common/dayjs";
 import { AuthGuard } from "../auth/auth.guard";
 

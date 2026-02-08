@@ -1,9 +1,11 @@
 
 import {
-  Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToMany
+  Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToMany,
+  OneToMany
 } from 'typeorm';
 import { User } from '../users/users.entity';
 import { Category } from '../categories/category.entity';
+import { DoctorSchedule } from './schedule/doctor-schedule.entity';
 
 @Entity()
 export class DoctorProfile {
@@ -33,4 +35,11 @@ export class DoctorProfile {
 
   @Column({nullable: true})
   commissionPercent: number;
+
+  @OneToMany(
+    () => DoctorSchedule,
+    schedule => schedule.doctor, // 👈 reverse name
+    { cascade: true },
+  )
+  schedules: DoctorSchedule[];
 }

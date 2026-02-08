@@ -6,7 +6,7 @@ import {
   ManyToOne,
   Unique,
 } from 'typeorm';
-import { DoctorProfile } from './doctor-profile.entity';
+import { DoctorProfile } from '../doctor-profile.entity';
 
 @Entity()
 @Unique(['doctor', 'dayOfWeek'])

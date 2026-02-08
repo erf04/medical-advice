@@ -7,13 +7,13 @@ import { DoctorProfile } from './doctor-profile.entity';
 import { AuthService } from '../auth/auth.service';
 import { AuthModule } from '../auth/auth.module';
 import { UsersService } from '../users/users.service';
-import { DoctorSchedule } from './doctor-schedule.entity';
-import { DoctorScheduleController } from './doctor-schedule.controller';
-import { DoctorScheduleService } from './doctor-schedule.service';
-import { DoctorDashboardController } from './doctor-dashboard.controller';
-import { DoctorDashboardService } from './doctor-dashboard.service';
+import { DoctorSchedule } from './schedule/doctor-schedule.entity';
+import { DoctorScheduleController } from './schedule/doctor-schedule.controller';
+import { DoctorScheduleService } from './schedule/doctor-schedule.service';
+import { DoctorDashboardController } from './dashboard/doctor-dashboard.controller';
 import { Consultation } from '../consultations/consultation.entity';
 import { DoctorAvailabilityController } from './doctor-availablity.controller';
+import { DoctorDashboardService } from './dashboard/doctor-dashboard.service';
 
 @Module({
   imports:[

@@ -3,10 +3,10 @@ import {
   Get,
   UseGuards,
 } from '@nestjs/common';
-import { User } from '../users/users.entity';
+import { User } from '../../users/users.entity';
 import { DoctorDashboardService } from './doctor-dashboard.service';
-import { AuthGuard } from '../auth/auth.guard';
-import { GetUser } from '../auth/auth.decorator';
+import { AuthGuard } from '../../auth/auth.guard';
+import { GetUser } from '../../auth/auth.decorator';
 
 @Controller('doctor/consultations')
 @UseGuards(AuthGuard)

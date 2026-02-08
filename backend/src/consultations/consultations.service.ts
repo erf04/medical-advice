@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 import { Consultation } from './consultation.entity';
 import { DoctorProfile } from '../doctors/doctor-profile.entity';
 import { PatientProfile } from '../patients/patient-profile.entity';
-import { DoctorSchedule } from '../doctors/doctor-schedule.entity';
+import { DoctorSchedule } from '../doctors/schedule/doctor-schedule.entity';
 import { User } from '../users/users.entity';
 import { ConfigService } from '@nestjs/config';
 import { ReserveConsultationDto } from './dto/create-consultation.dto';

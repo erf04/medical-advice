@@ -52,8 +52,58 @@ export class DoctorsService {
   async findProfileById(id: number) {
     const profile = await this.doctorRepo.findOne({
       where: { id },
+      relations: [
+        'categories',
+        'user',
+        'schedules', // 👈 load schedules
+      ],
+      order: {
+        schedules: {
+          startTime: 'ASC',
+        },
+      },
+    });
+
+    if (!profile) return null;
+
+    /* ------------------------------- */
+    /* Group schedules by dayOfWeek    */
+    /* ------------------------------- */
+    const schedulesByDay = profile.schedules.reduce(
+      (acc, schedule) => {
+        const day = schedule.dayOfWeek;
+
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+
+        acc[day].push({
+          id: schedule.id,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
+          duration: schedule.slotDuration,
+        });
+
+        return acc;
+      },
+      {} as Record<string | number, any[]>,
+    );
+
+    /* ------------------------------- */
+    /* Return clean API shape          */
+    /* ------------------------------- */
+    return instanceToPlain({
+      ...profile,
+      schedules: schedulesByDay,
+    });
+  }
+
+
+  async getAllDoctors() {
+    const doctors = await this.doctorRepo.find({
+      where: { isActive: true },
       relations: ['categories','user'],
     });
-    return instanceToPlain(profile);
+    return doctors.map((d) => instanceToPlain(d));
   }
 }

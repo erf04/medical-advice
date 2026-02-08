@@ -1,5 +1,5 @@
 
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { CreateDoctorProfileDto } from './dto/create-doctor-profile.dto';
 import { RolesGuard } from '../auth/roles.guard';
@@ -27,5 +27,15 @@ export class DoctorsController {
     @Roles(UserRole.DOCTOR)
     getMyProfile(@GetUser() user: User) {
         return this.doctorsService.getMyProfile(user);
+    }
+
+    @Get('all')
+    getAllDoctors() {
+        return this.doctorsService.getAllDoctors();
+    }
+
+    @Get(':id')
+    getDoctorById(@Param('id') id: number) {
+        return this.doctorsService.findProfileById(id);
     }
 }
