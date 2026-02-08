@@ -1,19 +1,8 @@
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { DoctorProfile } from "../doctors/doctor-profile.entity";
+import { PatientProfile } from "../patients/patient-profile.entity";
+
 // src/consultations/consultation.entity.ts
-import {
-  Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn
-} from 'typeorm';
-import { DoctorProfile } from '../doctors/doctor-profile.entity';
-import { PatientProfile } from '../patients/patient-profile.entity';
-
-
-export enum ConsultationStatus {
-  PENDING = 'PENDING',
-  ACTIVE = 'ACTIVE',
-  FINISHED = 'FINISHED',
-  CANCELED = 'CANCELED',
-}
-
-
 @Entity()
 export class Consultation {
   @PrimaryGeneratedColumn()
@@ -28,24 +17,43 @@ export class Consultation {
   @Column()
   subject: string;
 
-  @Column('text')
-  description: string;
+  @Column()
+  description: string = '';
 
-  @Column({ type: 'enum', enum: ConsultationStatus ,default: ConsultationStatus.PENDING})
-  status: ConsultationStatus;
+  /* Reservation info */
+  @Column({ type: 'date' })
+  reservedDate: Date; // Gregorian (UTC)
 
+  @Column() // HH:mm
+  startTime: string;
+
+  @Column() // HH:mm
+  endTime: string;
+
+  /* Lifecycle */
+  @Column({
+    type: 'enum',
+    enum: ['PENDING_PAYMENT', 'PAID', 'ACTIVE', 'FINISHED', 'CANCELED'],
+  })
+  status: string;
+
+  /* Financial snapshot */
   @Column()
   price: number;
 
   @Column()
   commissionPercent: number;
 
-  @CreateDateColumn()
-  startedAt: Date;
+  /* Runtime info */
+  @Column({ nullable: true })
+  startedAt?: Date;
 
   @Column({ nullable: true })
   endedAt?: Date;
 
   @Column()
-  expiresAt: Date;
+  expiresAt: Date; // chat grace period end
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

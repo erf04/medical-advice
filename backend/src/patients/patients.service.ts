@@ -46,4 +46,12 @@ export class PatientsService {
     });
     return instanceToPlain(profile)
   }
+
+  async findById(id: number) {
+    const profile = await this.patientRepo.findOne({
+      where: { id },
+      relations: ['user']
+    });
+    return instanceToPlain(profile);
+  }
 }

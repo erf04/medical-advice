@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Consultation, ConsultationStatus } from '../consultations/consultation.entity';
+import { Consultation } from '../consultations/consultation.entity';
 import { DoctorProfile } from '../doctors/doctor-profile.entity';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class DoctorDashboardService {
     return this.consultationRepo.find({
       where: {
         doctor: { id: doctor.id },
-        status: ConsultationStatus.PENDING,
+        status: 'PENDING',
       },
       relations: ['patient','patient.user'],
       order: { startedAt: 'ASC' },
@@ -46,7 +46,7 @@ export class DoctorDashboardService {
     return this.consultationRepo.find({
       where: {
         doctor: { id: doctor.id },
-        status: ConsultationStatus.ACTIVE,
+        status: 'ACTIVE',
       },
       relations: ['patient','patient.user'],
       order: { startedAt: 'ASC' },

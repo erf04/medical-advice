@@ -25,9 +25,12 @@ export class DoctorProfile {
 
   @Column({ default: 1 })
   maxConcurrentConsultations: number;
-  @Column({ type: 'decimal', precision: 10, scale: 2})
-  consultationPrice?: number;
+  @Column({ nullable: true })
+  consultationPrice: number;
 
   @ManyToMany(() => Category, (c) => c.doctors)
   categories: Category[];
+
+  @Column({nullable: true})
+  commissionPercent: number;
 }

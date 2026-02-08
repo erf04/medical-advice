@@ -13,6 +13,7 @@ import { DoctorScheduleService } from './doctor-schedule.service';
 import { DoctorDashboardController } from './doctor-dashboard.controller';
 import { DoctorDashboardService } from './doctor-dashboard.service';
 import { Consultation } from '../consultations/consultation.entity';
+import { DoctorAvailabilityController } from './doctor-availablity.controller';
 
 @Module({
   imports:[
@@ -20,7 +21,8 @@ import { Consultation } from '../consultations/consultation.entity';
     TypeOrmModule.forFeature([DoctorSchedule]),
     forwardRef(()=> AuthModule)
   ],
-  controllers: [DoctorsController,DoctorScheduleController,DoctorDashboardController],
+  controllers: [DoctorsController,DoctorScheduleController,
+    DoctorDashboardController,DoctorAvailabilityController],
   providers: [DoctorsService,DoctorScheduleService,DoctorDashboardService],
   exports:[DoctorsService]
 })

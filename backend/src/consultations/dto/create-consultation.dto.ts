@@ -1,17 +1,12 @@
-// src/consultations/dto/create-consultation.dto.ts
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-
-export class CreateConsultationDto {
-  @IsInt()
+export class ReserveConsultationDto {
   doctorId: number;
+  scheduleId: number;
 
-  @IsInt()
-  patientProfileId: number;
+  // Jalali date from UI
+  reservedDateJalali: string; // YYYY/MM/DD
 
-  @IsString()
-  @IsNotEmpty()
+  patientId: number; // allows reserving for others
+  paymentMethod: 'WALLET' | 'DIRECT';
   subject: string;
-
-  @IsString()
-  description?: string;
+  description: string;
 }

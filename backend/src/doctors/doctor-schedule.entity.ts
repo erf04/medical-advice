@@ -27,4 +27,8 @@ export class DoctorSchedule {
 
   @Column()
   endTime: string;
+
+  
+  @Column({nullable: true}) // minutes
+  slotDuration: number;
 }

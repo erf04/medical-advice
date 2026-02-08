@@ -5,10 +5,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ConsultationService } from './consultations.service';
-import { CreateConsultationDto } from './dto/create-consultation.dto';
 import { GetUser } from '../auth/auth.decorator';
 import { User } from '../users/users.entity';
 import { AuthGuard } from '../auth/auth.guard';
+import { ReserveConsultationDto } from './dto/create-consultation.dto';
 
 @Controller('consultations')
 @UseGuards(AuthGuard)
@@ -20,8 +20,8 @@ export class ConsultationsController {
   @Post()
   create(
     @GetUser() user: User,
-    @Body() dto: CreateConsultationDto,
+    @Body() dto: ReserveConsultationDto,
   ) {
-    return this.consultationService.create(user, dto);
+    return this.consultationService.reserve(dto, user);
   }
 }

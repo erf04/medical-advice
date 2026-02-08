@@ -48,4 +48,12 @@ export class DoctorsService {
     });
     return instanceToPlain(profile);
   }
+
+  async findProfileById(id: number) {
+    const profile = await this.doctorRepo.findOne({
+      where: { id },
+      relations: ['categories','user'],
+    });
+    return instanceToPlain(profile);
+  }
 }
