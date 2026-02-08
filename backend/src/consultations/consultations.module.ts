@@ -9,6 +9,7 @@ import { DoctorSchedule } from '../doctors/schedule/doctor-schedule.entity';
 import { AuthModule } from '../auth/auth.module';
 import { DoctorsModule } from '../doctors/doctors.module';
 import { PatientsModule } from '../patients/patients.module';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports:[
@@ -16,6 +17,7 @@ import { PatientsModule } from '../patients/patients.module';
     AuthModule,
     DoctorsModule,
     PatientsModule,
+    WalletModule,
 
   ],
   controllers: [ConsultationsController],

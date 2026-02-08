@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedCol
 import { DoctorProfile } from "../doctors/doctor-profile.entity";
 import { PatientProfile } from "../patients/patient-profile.entity";
 
-// src/consultations/consultation.entity.ts
 @Entity()
 @Index(['doctor', 'reservedDate', 'startTime', 'endTime'])
 export class Consultation {

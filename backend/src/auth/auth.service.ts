@@ -7,13 +7,15 @@ import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './auth.dto';
 import { DoctorsService } from '../doctors/doctors.service';
 import { PatientsService } from '../patients/patients.service';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 @Global()
 export class AuthService {
     constructor(
-        private userService:UsersService,
-        private jwtService:JwtService,
+        private readonly userService:UsersService,
+        private readonly jwtService:JwtService,
+        private readonly walletService: WalletService
     ){}
 
     async signIn(phoneNumber:string ,password:string ){
@@ -42,6 +44,7 @@ export class AuthService {
         }
         const user =  User.fromSignUpDto(data);
         const savedUser = await this.userService.save(user);
+        await this.walletService.getOrCreateWallet(savedUser);
         return {
             user: plainToInstance(UserOut, savedUser, {excludeExtraneousValues:true}),
             accessToken: await this.jwtService.signAsync({

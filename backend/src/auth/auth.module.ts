@@ -10,6 +10,7 @@ import { RolesGuard } from './roles.guard';
 import { DoctorsService } from '../doctors/doctors.service';
 import { DoctorsModule } from '../doctors/doctors.module';
 import { PatientsModule } from '../patients/patients.module';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PatientsModule } from '../patients/patients.module';
         secret: configService.get<string>('JWT_SECRET'),
       })
     }),
+    forwardRef(() => WalletModule),
   ],
   controllers: [AuthController],
   providers: [AuthService,AuthGuard,RolesGuard],

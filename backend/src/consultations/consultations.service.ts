@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { ReserveConsultationDto } from './dto/create-consultation.dto';
 import { PatientsService } from '../patients/patients.service';
 import { DoctorsService } from '../doctors/doctors.service';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class ConsultationService {
@@ -24,6 +25,7 @@ export class ConsultationService {
     private readonly doctorService:DoctorsService,
     private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
+    private readonly walletService: WalletService,
   ) {}
 
   // async create(
@@ -119,7 +121,7 @@ export class ConsultationService {
   //   });
   // }
 
-    async reserve(dto: ReserveConsultationDto, user: User) {
+  async reserve(dto: ReserveConsultationDto, user: User) {
     return this.dataSource.transaction(async manager => {
       /* 1. Load doctor */
       const doctor = await this.doctorService.findProfileById(dto.doctorId);
@@ -145,7 +147,7 @@ export class ConsultationService {
         .startOf('day')
         .toDate();
 
-      /* 5. Load patient (can be different from user) */
+      /* 4. Load patient (can be different from user) */
       const patient = await this.patientService.findById(dto.patientId);
       if (!patient) {
         throw new BadRequestException('Patient not found');
@@ -168,7 +170,7 @@ export class ConsultationService {
         );
       }
 
-      /* 4. Capacity check (CRITICAL) */
+      /* 5. Capacity check (CRITICAL) */
       const existingCount = await manager.count(Consultation, {
         where: {
           doctor: { id: doctor.id },
@@ -186,7 +188,7 @@ export class ConsultationService {
 
 
       /* 6. Price snapshot (admin-defined) */
-      const price = Number(doctor.consultationPrice) || this.configService.get<number>('DEFAULT_CONSULTATION_PRICE');
+      const price = Number(doctor.consultationPrice) || this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') || 100; // fallback to 100 if not set
       const commissionPercent = this.configService.get<number>('DEFAULT_COMMISSION_PERCENT');
 
       /* 7. Calculate expiresAt (endTime + grace) */
@@ -217,14 +219,15 @@ export class ConsultationService {
       await manager.save(consultation);
 
       /* 9. Symbolic payment */
-      const paymentSucceeded = await this.processPayment(
+      const { success , message } = await this.processPayment(
         dto.paymentMethod,
         user,
         price,
+        consultation,
       );
 
-      if (!paymentSucceeded) {
-        throw new BadRequestException('Payment failed');
+      if (!success) {
+        throw new BadRequestException(`Payment failed: ${message}`);
       }
 
       /* 10. Mark as PAID */
@@ -238,9 +241,32 @@ export class ConsultationService {
   private async processPayment(
     method: 'WALLET' | 'DIRECT',
     user: User,
-    amount: number | undefined,
-  ): Promise<boolean> {
+    amount: number,
+    consultation: Consultation,
+  ): Promise<{ success: boolean , message?: string}> {
     // Placeholder — always succeeds for now
-    return true;
+    if (method === 'WALLET') {
+      await this.walletService.payConsultationWithWallet(
+        user,
+        consultation,
+      );
+      return { success: true };
+    } else if (method === 'DIRECT') {
+      // DIRECT PAY (gateway simulation)
+      await this.walletService.depositByGateway(
+        user,
+        amount,
+        consultation.id,
+      );
+
+      await this.walletService.payConsultationWithWallet(
+        user,
+        consultation,
+      );
+      return { success: true };
+    }
+    else {
+      return { success: false, message: 'Unsupported payment method' };
+    }
   }
 }
