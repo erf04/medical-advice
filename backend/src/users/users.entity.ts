@@ -40,6 +40,9 @@ export class User {
   @OneToOne(() => PatientProfile, (p) => p.user)
   patientProfile: PatientProfile;
 
+  @Column({ nullable: true })
+  profileImage?: string; // e.g. /uploads/users/user-12.png
+
   @CreateDateColumn()
   createdAt: Date;
 
