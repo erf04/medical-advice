@@ -1,7 +1,8 @@
 
 import {
   Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToMany,
-  OneToMany
+  OneToMany,
+  ManyToOne
 } from 'typeorm';
 import { User } from '../users/users.entity';
 import { Category } from '../categories/category.entity';
@@ -30,8 +31,8 @@ export class DoctorProfile {
   @Column({ nullable: true })
   consultationPrice: number;
 
-  @ManyToMany(() => Category, (c) => c.doctors)
-  categories: Category[];
+  @ManyToOne(() => Category, (c) => c.doctors)
+  category: Category;
 
   @Column({nullable: true})
   commissionPercent: number;

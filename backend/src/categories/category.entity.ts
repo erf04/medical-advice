@@ -15,7 +15,7 @@ export class Category {
   @Column({ nullable: true })
   description?: string;
 
-  @ManyToMany(() => DoctorProfile, (d) => d.categories)
+  @ManyToMany(() => DoctorProfile, (d) => d.category)
   @JoinTable()
   doctors: DoctorProfile[];
 }

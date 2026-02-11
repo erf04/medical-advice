@@ -10,6 +10,7 @@ import { DoctorProfile } from './doctor-profile.entity';
 import { User, UserRole } from '../users/users.entity';
 import { CreateDoctorProfileDto } from './dto/create-doctor-profile.dto';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { Category } from '../categories/category.entity';
 
 
 @Injectable()
@@ -17,6 +18,9 @@ export class DoctorsService {
   constructor(
     @InjectRepository(DoctorProfile)
     private doctorRepo: Repository<DoctorProfile>,
+
+    @InjectRepository(Category)
+    private categoryRepo:Repository<Category>
   ) {}
 
   async createProfile(user: User, dto: CreateDoctorProfileDto) {
@@ -31,9 +35,19 @@ export class DoctorsService {
     if (exists) {
       throw new BadRequestException('Doctor profile already exists');
     }
+    const category = await this.categoryRepo.findOne({
+      where : {
+        id : dto.category
+      }
+    })
+    if (!category){
+      throw new BadRequestException('category not found!')
+    }
 
     const profile = this.doctorRepo.create({
-      ...dto,
+      medicalCode:dto.medicalCode,
+      contactInfo : dto.contactInfo,
+      category : category,
       user,
       maxConcurrentConsultations: dto.maxConcurrentConsultations ?? 1,
     });

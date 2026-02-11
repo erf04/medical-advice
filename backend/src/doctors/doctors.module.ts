@@ -14,10 +14,11 @@ import { DoctorDashboardController } from './dashboard/doctor-dashboard.controll
 import { Consultation } from '../consultations/consultation.entity';
 import { DoctorAvailabilityController } from './doctor-availablity.controller';
 import { DoctorDashboardService } from './dashboard/doctor-dashboard.service';
+import { Category } from '../categories/category.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([DoctorProfile,Consultation]),
+    TypeOrmModule.forFeature([DoctorProfile,Consultation,Category]),
     TypeOrmModule.forFeature([DoctorSchedule]),
     forwardRef(()=> AuthModule)
   ],
