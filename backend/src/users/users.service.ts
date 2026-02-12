@@ -15,7 +15,10 @@ export class UsersService {
   ) {}
 
   async findOneByPhone(phoneNumber: string) {
-    return this.userRepository.findOneBy({ phone: phoneNumber });
+    return this.userRepository.findOne({
+      where: { phone: phoneNumber },
+      relations: ['doctorProfile', 'patientProfile'],
+    });
   }
 
   async save(user: User) {
