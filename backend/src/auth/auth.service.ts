@@ -31,7 +31,7 @@ export class AuthService {
         // return plainToInstance(UserOut,User,{excludeExtraneousValues:true});
         return {
             accessToken : await this.jwtService.signAsync(payload),
-            role: user.role,
+            user: user,
             hasProfile: this.hasProfile(user),
         }
     }
