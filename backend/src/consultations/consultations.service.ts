@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, LessThanOrEqual, MoreThanOrEqual, Not, DataSource } from 'typeorm';
 import dayjs from 'dayjs';
 
-import { Consultation } from './consultation.entity';
+import { Consultation, ConsultationStatus } from './consultation.entity';
 import { DoctorProfile } from '../doctors/doctor-profile.entity';
 import { PatientProfile } from '../patients/patient-profile.entity';
 import { DoctorSchedule } from '../doctors/schedule/doctor-schedule.entity';
@@ -17,6 +18,7 @@ import { ReserveConsultationDto } from './dto/create-consultation.dto';
 import { PatientsService } from '../patients/patients.service';
 import { DoctorsService } from '../doctors/doctors.service';
 import { WalletService } from '../wallet/wallet.service';
+import { log } from 'console';
 
 @Injectable()
 export class ConsultationService {
@@ -26,6 +28,8 @@ export class ConsultationService {
     private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
     private readonly walletService: WalletService,
+    @InjectRepository(Consultation)
+    private consultationRepo: Repository<Consultation>,
   ) {}
 
   // async create(
@@ -160,7 +164,7 @@ export class ConsultationService {
           reservedDate,
           startTime: schedule.startTime,
           endTime: schedule.endTime,
-          status: Not('CANCELED'),
+          status: Not(ConsultationStatus.CANCELED),
         },
       });
 
@@ -177,7 +181,7 @@ export class ConsultationService {
           reservedDate,
           startTime: schedule.startTime,
           endTime: schedule.endTime,
-          status: Not('CANCELED'),
+          status: Not(ConsultationStatus.CANCELED),
         },
       });
 
@@ -206,7 +210,7 @@ export class ConsultationService {
         startTime: schedule.startTime,
         endTime: schedule.endTime,
 
-        status: 'PENDING_PAYMENT',
+        status: ConsultationStatus.PENDING_PAYMENT,
 
         price,
         commissionPercent,
@@ -231,7 +235,7 @@ export class ConsultationService {
       }
 
       /* 10. Mark as PAID */
-      consultation.status = 'PAID';
+      consultation.status = ConsultationStatus.PAID;
       await manager.save(consultation);
 
       return consultation;
@@ -269,4 +273,57 @@ export class ConsultationService {
       return { success: false, message: 'Unsupported payment method' };
     }
   }
+
+  async startConsultation(id: number, userId: number) {
+    const consultation = await this.consultationRepo.findOne({
+      where: { id },
+      relations: ['doctor', 'doctor.user'],
+    });
+
+    if (!consultation) throw new NotFoundException();
+
+    if (consultation.doctor.user.id !== userId)
+      throw new ForbiddenException();
+
+    if (consultation.status !== ConsultationStatus.PAID)
+      throw new BadRequestException('Invalid state');
+
+
+    const [startHour, startMinute] = consultation.startTime.split(':').map(Number);
+    const [endHour, endMinute] = consultation.endTime.split(':').map(Number);
+
+    const baseDate = dayjs(consultation.reservedDate, {
+      jalali: true
+    });
+
+
+    const startDateTime = baseDate
+      .hour(startHour)
+      .minute(startMinute)
+      .second(0);
+
+    const endDateTime = baseDate
+      .hour(endHour)
+      .minute(endMinute)
+      .second(0);
+
+    const now = dayjs().calendar('jalali'); // current real time
+    // log('now', now.valueOf());
+    // log('startDateTime', startDateTime.valueOf());
+    // log('endDateTime', endDateTime.valueOf());
+
+    if (now.isBefore(startDateTime)) {
+      throw new BadRequestException('Too early');
+    }
+
+    if (now.isAfter(endDateTime)) {
+      throw new BadRequestException('Slot expired');
+    }
+
+    consultation.status = ConsultationStatus.ACTIVE;
+    consultation.startedAt = now.toDate();
+
+    return this.consultationRepo.save(consultation);
+  }
+
 }

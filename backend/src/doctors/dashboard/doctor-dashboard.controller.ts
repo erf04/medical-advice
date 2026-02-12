@@ -15,9 +15,9 @@ export class DoctorDashboardController {
     private readonly doctorDashboardService: DoctorDashboardService,
   ) {}
 
-  @Get('pending')
-  getPending(@GetUser() user: User) {
-    return this.doctorDashboardService.getPendingConsultations(user.id);
+  @Get('upcoming')
+  getUpcoming(@GetUser() user: User) {
+    return this.doctorDashboardService.getUpcomingForDoctor(user.id);
   }
 
   @Get('active')

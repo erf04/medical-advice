@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -23,5 +24,13 @@ export class ConsultationsController {
     @Body() dto: ReserveConsultationDto,
   ) {
     return this.consultationService.reserve(dto, user);
+  }
+
+  @Post(':id/start')
+  startConsultation(
+    @GetUser() user: User,
+    @Param('id') id: number,
+  ) {
+    return this.consultationService.startConsultation(id, user.id);
   }
 }

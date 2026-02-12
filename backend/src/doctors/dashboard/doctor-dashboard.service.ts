@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Consultation } from '../../consultations/consultation.entity';
+import { Consultation, ConsultationStatus } from '../../consultations/consultation.entity';
 import { DoctorProfile } from '../doctor-profile.entity';
 
 
@@ -16,7 +16,7 @@ export class DoctorDashboardService {
     private readonly doctorRepo: Repository<DoctorProfile>,
   ) {}
 
-  async getPendingConsultations(userId: number) {
+  async getUpcomingForDoctor(userId: number) {
     const doctor = await this.doctorRepo.findOne({
       where: { user: { id: userId } },
     });
@@ -28,7 +28,7 @@ export class DoctorDashboardService {
     return this.consultationRepo.find({
       where: {
         doctor: { id: doctor.id },
-        status: 'PENDING',
+        status: ConsultationStatus.PAID,
       },
       relations: ['patient','patient.user'],
       order: { startedAt: 'ASC' },
@@ -47,7 +47,7 @@ export class DoctorDashboardService {
     return this.consultationRepo.find({
       where: {
         doctor: { id: doctor.id },
-        status: 'ACTIVE',
+        status: ConsultationStatus.ACTIVE,
       },
       relations: ['patient','patient.user'],
       order: { startedAt: 'ASC' },

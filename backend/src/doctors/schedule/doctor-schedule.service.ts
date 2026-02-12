@@ -10,7 +10,7 @@ import { DoctorProfile } from '../doctor-profile.entity';
 import { SetDoctorScheduleDto } from '../dto/set-doctor-schedule.dto';
 import { User } from '../../users/users.entity';
 import { DoctorsService } from '../doctors.service';
-import { Consultation } from '../../consultations/consultation.entity';
+import { Consultation, ConsultationStatus } from '../../consultations/consultation.entity';
 import dayjs from '../../common/dayjs';
 import { log } from 'console';
 
@@ -172,7 +172,7 @@ export class DoctorScheduleService {
       where: {
         doctor: { id: doctorId },
         reservedDate: reservedDate,
-        status: Not('CANCELED'),
+        status: Not(ConsultationStatus.CANCELED),
       },
     });
 

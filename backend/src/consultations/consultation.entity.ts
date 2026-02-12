@@ -2,6 +2,15 @@ import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedCol
 import { DoctorProfile } from "../doctors/doctor-profile.entity";
 import { PatientProfile } from "../patients/patient-profile.entity";
 
+
+export enum ConsultationStatus {
+  PENDING_PAYMENT = 'PENDING_PAYMENT',
+  PAID = 'PAID',
+  ACTIVE = 'ACTIVE',
+  FINISHED = 'FINISHED',
+  CANCELED = 'CANCELED',
+}
+
 @Entity()
 @Index(['doctor', 'reservedDate', 'startTime', 'endTime'])
 export class Consultation {
@@ -33,9 +42,9 @@ export class Consultation {
   /* Lifecycle */
   @Column({
     type: 'enum',
-    enum: ['PENDING_PAYMENT', 'PAID', 'ACTIVE', 'FINISHED', 'CANCELED'],
+    enum: ConsultationStatus,
   })
-  status: string;
+  status: ConsultationStatus;
 
   /* Financial snapshot */
   @Column()
