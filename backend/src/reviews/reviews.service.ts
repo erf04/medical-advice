@@ -73,4 +73,11 @@ export class ReviewsService {
       totalReviews: total,
     });
   }
+
+  async getAllReviews(){
+    return this.reviewRepo.find({
+      relations: ['doctor', 'doctor.user', 'patient','patient.user'],
+      order: { createdAt: 'DESC' },
+    });
+  }
 }
