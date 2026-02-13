@@ -5,14 +5,18 @@ import { Type } from 'class-transformer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PatientProfile } from './patient-profile.entity';
 import { AuthModule } from '../auth/auth.module';
+import { AdminPatientController } from './admin/admin-patient.controller';
+import { AdminPatientService } from './admin/admin-patient.service';
+import { UsersModule } from '../users/users.module';
+import { User } from '../users/users.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([PatientProfile]),
-    AuthModule
+    TypeOrmModule.forFeature([PatientProfile,User]),
+    AuthModule,
   ],
-  controllers: [PatientsController],
-  providers: [PatientsService],
+  controllers: [PatientsController,AdminPatientController],
+  providers: [PatientsService,AdminPatientService],
   exports:[PatientsService]
 })
 export class PatientsModule {}
