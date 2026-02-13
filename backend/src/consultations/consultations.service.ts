@@ -5,7 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, LessThanOrEqual, MoreThanOrEqual, Not, DataSource } from 'typeorm';
+import {
+  Repository,
+  Between,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Not,
+  DataSource,
+} from 'typeorm';
 import dayjs from 'dayjs';
 
 import { Consultation, ConsultationStatus } from './consultation.entity';
@@ -23,8 +30,8 @@ import { log } from 'console';
 @Injectable()
 export class ConsultationService {
   constructor(
-    private readonly patientService:PatientsService,
-    private readonly doctorService:DoctorsService,
+    private readonly patientService: PatientsService,
+    private readonly doctorService: DoctorsService,
     private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
     private readonly walletService: WalletService,
@@ -32,101 +39,15 @@ export class ConsultationService {
     private consultationRepo: Repository<Consultation>,
   ) {}
 
-  // async create(
-  //   user: User,
-  //   dto: CreateConsultationDto,
-  // ): Promise<Consultation> {
-
-  //   // 1️⃣ Doctor
-  //   const doctor = await this.doctorRepo.findOne({
-  //     where: { id: dto.doctorId },
-  //   });
-
-  //   if (!doctor) {
-  //     throw new NotFoundException('Doctor not found');
-  //   }
-
-  //   // 2️⃣ Patient ownership
-  //   const patient = await this.patientRepo.findOne({
-  //     where: {
-  //       id: dto.patientProfileId,
-  //       user: { id: user.id },
-  //     },
-  //   });
-
-  //   if (!patient) {
-  //     throw new BadRequestException(
-  //       'Patient profile does not belong to user',
-  //     );
-  //   }
-
-  //   // 3️⃣ Doctor working hours
-  //   const now = dayjs();
-  //   const dayOfWeek = now.day(); // map if you use Persian week
-  //   const time = now.format('HH:mm');
-
-  //   const schedule = await this.scheduleRepo.findOne({
-  //     where: {
-  //       doctor: { id: doctor.id },
-  //       dayOfWeek,
-  //       startTime: LessThanOrEqual(time),
-  //       endTime: MoreThanOrEqual(time),
-  //     },
-  //   });
-
-  //   if (!schedule) {
-  //     throw new BadRequestException(
-  //       'Doctor is not available at this time',
-  //     );
-  //   }
-
-  //   // 4️⃣ Doctor capacity (active + pending)
-  //   const activeCount = await this.consultationRepo.count({
-  //     where: {
-  //       doctor: { id: doctor.id },
-  //       status: 'ACTIVE',
-  //     },
-  //   });
-
-  //   if (activeCount >= doctor.maxConcurrentConsultations) {
-  //     throw new BadRequestException(
-  //       'Doctor capacity is full',
-  //     );
-  //   }
-
-  //   // 5️⃣ Pricing & commission (snapshot)
-  //   const price = Number(doctor.consultationPrice) || this.configService.get<number>('DEFAULT_CONSULTATION_PRICE');
-  //   const commissionPercent = this.configService.get<number>('DEFAULT_COMMISSION_PERCENT');
-
-  //   // 6️⃣ Create consultation
-  //   const endDateTime = dayjs(consultationDate)
-  //     .hour(Number(dto.endTime.split(':')[0]))
-  //     .minute(Number(dto.endTime.split(':')[1]))
-  //     .second(0);
-
-  //   const consultation = this.consultationRepo.create({
-  //     doctor,
-  //     patient,
-
-  //     /* Reservation info */
-  //     reservedDate: consultationDate,   // Date (UTC, 00:00)
-  //     startTime: dto.startTime,          // "HH:mm"
-  //     endTime: dto.endTime,              // "HH:mm"
-
-  //     /* Lifecycle */
-  //     status: 'PENDING_PAYMENT',
-
-  //     /* Financial snapshot */
-  //     price,                             // from admin config
-  //     commissionPercent,                 // from admin config
-
-  //     /* Runtime */
-  //     expiresAt: endDateTime.add(72, 'hour').toDate(),
-  //   });
-  // }
+  async findById(id: number) {
+    return this.consultationRepo.findOne({
+      where: { id },
+      relations: ['doctor', 'patient', 'doctor.user', 'patient.user'],
+    });
+  }
 
   async reserve(dto: ReserveConsultationDto, user: User) {
-    return this.dataSource.transaction(async manager => {
+    return this.dataSource.transaction(async (manager) => {
       /* 1. Load doctor */
       const doctor = await this.doctorService.findProfileById(dto.doctorId);
       if (!doctor) {
@@ -189,11 +110,14 @@ export class ConsultationService {
         throw new BadRequestException('This slot is fully booked');
       }
 
-
-
       /* 6. Price snapshot (admin-defined) */
-      const price = Number(doctor.consultationPrice) || this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') || 100; // fallback to 100 if not set
-      const commissionPercent = this.configService.get<number>('DEFAULT_COMMISSION_PERCENT');
+      const price =
+        Number(doctor.consultationPrice) ||
+        this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ||
+        100; // fallback to 100 if not set
+      const commissionPercent = this.configService.get<number>(
+        'DEFAULT_COMMISSION_PERCENT',
+      );
 
       /* 7. Calculate expiresAt (endTime + grace) */
       const endDateTime = dayjs(reservedDate)
@@ -223,7 +147,7 @@ export class ConsultationService {
       await manager.save(consultation);
 
       /* 9. Symbolic payment */
-      const { success , message } = await this.processPayment(
+      const { success, message } = await this.processPayment(
         dto.paymentMethod,
         user,
         price,
@@ -247,29 +171,18 @@ export class ConsultationService {
     user: User,
     amount: number,
     consultation: Consultation,
-  ): Promise<{ success: boolean , message?: string}> {
+  ): Promise<{ success: boolean; message?: string }> {
     // Placeholder — always succeeds for now
     if (method === 'WALLET') {
-      await this.walletService.payConsultationWithWallet(
-        user,
-        consultation,
-      );
+      await this.walletService.payConsultationWithWallet(user, consultation);
       return { success: true };
     } else if (method === 'DIRECT') {
       // DIRECT PAY (gateway simulation)
-      await this.walletService.depositByGateway(
-        user,
-        amount,
-        consultation.id,
-      );
+      await this.walletService.depositByGateway(user, amount, consultation.id);
 
-      await this.walletService.payConsultationWithWallet(
-        user,
-        consultation,
-      );
+      await this.walletService.payConsultationWithWallet(user, consultation);
       return { success: true };
-    }
-    else {
+    } else {
       return { success: false, message: 'Unsupported payment method' };
     }
   }
@@ -282,30 +195,26 @@ export class ConsultationService {
 
     if (!consultation) throw new NotFoundException();
 
-    if (consultation.doctor.user.id !== userId)
-      throw new ForbiddenException();
+    if (consultation.doctor.user.id !== userId) throw new ForbiddenException();
 
     if (consultation.status !== ConsultationStatus.PAID)
       throw new BadRequestException('Invalid state');
 
-
-    const [startHour, startMinute] = consultation.startTime.split(':').map(Number);
+    const [startHour, startMinute] = consultation.startTime
+      .split(':')
+      .map(Number);
     const [endHour, endMinute] = consultation.endTime.split(':').map(Number);
 
     const baseDate = dayjs(consultation.reservedDate, {
-      jalali: true
+      jalali: true,
     });
-
 
     const startDateTime = baseDate
       .hour(startHour)
       .minute(startMinute)
       .second(0);
 
-    const endDateTime = baseDate
-      .hour(endHour)
-      .minute(endMinute)
-      .second(0);
+    const endDateTime = baseDate.hour(endHour).minute(endMinute).second(0);
 
     const now = dayjs().calendar('jalali'); // current real time
     // log('now', now.valueOf());
@@ -325,5 +234,4 @@ export class ConsultationService {
 
     return this.consultationRepo.save(consultation);
   }
-
 }
