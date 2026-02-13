@@ -243,22 +243,53 @@ export class ConsultationService {
   }
 
   async finishConsultation(consultationId: number) {
-    const consultation = await this.consultationRepo.findOne({
-      where: { id: consultationId },
-      relations: ['doctor', 'doctor.user', 'patient', 'patient.user'],
+    return this.dataSource.transaction(async (manager) => {
+      const consultation = await manager.findOne(Consultation, {
+        where: { id: consultationId },
+        relations: ['doctor', 'patient'],
+      });
+
+      if (!consultation) {
+        throw new NotFoundException();
+      }
+
+      consultation.status = ConsultationStatus.FINISHED;
+      await manager.save(consultation);
+
+      /* ------------------------------ */
+      /* Update consultationCount       */
+      /* ------------------------------ */
+
+      await manager.increment(
+        DoctorProfile,
+        { id: consultation.doctor.id },
+        'consultationCount',
+        1,
+      );
+
+      /* ------------------------------ */
+      /* Update patientCount (unique)   */
+      /* ------------------------------ */
+
+      const previous = await manager.count(Consultation, {
+        where: {
+          doctor: { id: consultation.doctor.id },
+          patient: { id: consultation.patient.id },
+          status: ConsultationStatus.FINISHED,
+        },
+      });
+
+      // If this is the FIRST finished consultation for that patient
+      if (previous === 1) {
+        await manager.increment(
+          DoctorProfile,
+          { id: consultation.doctor.id },
+          'patientCount',
+          1,
+        );
+      }
+
+      return consultation;
     });
-
-    if (!consultation) throw new NotFoundException();
-
-    if (consultation.status !== ConsultationStatus.ACTIVE)
-      throw new BadRequestException('Consultation not active');
-
-
-    consultation.status = ConsultationStatus.FINISHED;
-    consultation.endedAt = new Date();
-
-    await this.consultationRepo.save(consultation);
-
-    return { message: 'Consultation finished' };
   }
 }

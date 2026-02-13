@@ -50,4 +50,11 @@ export class DoctorProfile {
   @Column({ default: 0 })
   totalReviews: number;
 
+  
+  @Column({ type: 'int', default: 0 })
+  patientCount: number;
+
+  @Column({ type: 'int', default: 0 })
+  consultationCount: number;
+
 }
