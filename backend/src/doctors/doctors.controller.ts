@@ -40,4 +40,12 @@ export class DoctorsController {
   getDoctorById(@Param('id') id: number) {
     return this.doctorsService.findProfileById(id);
   }
+
+  
+    @Get('reviews/:id')
+    async getMyReviews(@Param('id') doctorUserId: number) {
+    return this.doctorsService.getDoctorReviews(
+        doctorUserId,
+    );
+    }
 }

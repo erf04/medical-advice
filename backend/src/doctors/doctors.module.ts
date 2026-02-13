@@ -15,10 +15,11 @@ import { Consultation } from '../consultations/consultation.entity';
 import { DoctorAvailabilityController } from './doctor-availablity.controller';
 import { DoctorDashboardService } from './dashboard/doctor-dashboard.service';
 import { Category } from '../categories/category.entity';
+import { Review } from '../reviews/review.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([DoctorProfile,Consultation,Category]),
+    TypeOrmModule.forFeature([DoctorProfile,Consultation,Category,Review]),
     TypeOrmModule.forFeature([DoctorSchedule]),
     forwardRef(()=> AuthModule)
   ],

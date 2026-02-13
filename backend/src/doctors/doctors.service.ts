@@ -3,6 +3,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,6 +14,7 @@ import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Category } from '../categories/category.entity';
 import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 import { log } from 'console';
+import { Review } from '../reviews/review.entity';
 
 @Injectable()
 export class DoctorsService {
@@ -22,6 +24,9 @@ export class DoctorsService {
 
     @InjectRepository(Category)
     private categoryRepo: Repository<Category>,
+
+    @InjectRepository(Review)
+    private reviewRepo: Repository<Review>,
   ) {}
 
   async createProfile(user: User, dto: CreateDoctorProfileDto) {
@@ -173,5 +178,23 @@ export class DoctorsService {
       relations: ['category', 'user'],
     });
     return doctors.map((d) => instanceToPlain(d));
+  }
+
+  async getDoctorReviews(doctorUserId: number) {
+    const doctor = await this.doctorRepo.findOne({
+      where: { id: doctorUserId },
+    });
+    if (!doctor) throw new NotFoundException('Doctor profile not found');
+
+    const reviews = await this.reviewRepo.find({
+      where: {
+        doctor: { id: doctor.id },
+      },
+      relations: ['patient', 'consultation'],
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    return reviews;
   }
 }
