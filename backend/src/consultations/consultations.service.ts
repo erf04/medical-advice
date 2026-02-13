@@ -195,7 +195,7 @@ export class ConsultationService {
 
     if (!consultation) throw new NotFoundException();
 
-    if (consultation.doctor.user.id !== userId) throw new ForbiddenException();
+    // if (consultation.doctor.user.id !== userId) throw new ForbiddenException();
 
     if (consultation.status !== ConsultationStatus.PAID)
       throw new BadRequestException('Invalid state');
