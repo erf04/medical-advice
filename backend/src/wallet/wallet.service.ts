@@ -56,8 +56,9 @@ export class WalletService {
         where: { user: { id: user.id } },
         lock: { mode: 'pessimistic_write' },
       });
-
-      wallet.balance += amount;
+      const balanceBefore = Number(wallet.balance);
+      const newBalance = balanceBefore + amount;
+      wallet.balance =newBalance;
       await manager.save(wallet);
 
       await manager.save(
