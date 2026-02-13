@@ -9,6 +9,9 @@ export enum ConsultationStatus {
   ACTIVE = 'ACTIVE',
   FINISHED = 'FINISHED',
   CANCELED = 'CANCELED',
+  SETTLEMENT_REQUESTED = 'SETTLEMENT_REQUESTED',
+  SETTLED = 'SETTLED',
+
 }
 
 @Entity()
