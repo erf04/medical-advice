@@ -1068,6 +1068,7 @@ export default {
           const doctorProfilePayload = {
             medicalCode: this.signupData.medicalCode,
             contactInfo: this.signupData.contactInfo,
+            category: this.signupData.categories[0]
             // Note: Your API example shows "contactInfo" but might need adjustment
           }
           

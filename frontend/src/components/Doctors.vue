@@ -246,7 +246,7 @@
               <!-- Doctor Info -->
               <div class="doctor-info">
                 <h3 class="doctor-name">Dr. {{ doctor.firstName }} {{ doctor.lastName }}</h3>
-                <p class="doctor-specialty">{{ doctor.specialty }}</p>
+                <!-- <p class="doctor-specialty">{{ doctor.specialty }}</p> -->
                 
                 <!-- Rating -->
                 <div class="doctor-rating">
@@ -591,7 +591,7 @@ export default {
         profileImage: this.defaultDoctorImage,
         // For specialty, you might need to adjust based on your API
         // Using medicalCode or categories from API
-        specialty: this.getSpecialtyFromMedicalCode(apiDoctor.medicalCode) || 'General Medicine',
+        specialty: apiDoctor.category || 'General Medicine',
         // Use fake rating data for now as per your requirement
         rating: this.getRandomRating(),
         reviewCount: this.getRandomReviewCount(),
@@ -609,7 +609,7 @@ export default {
         // Available today - placeholder
         availableToday: Math.random() > 0.3,
         // Categories from API or extract from medicalCode
-        categories: apiDoctor.categories || this.extractCategories(apiDoctor.medicalCode),
+        categories: apiDoctor.category || '',
         // Additional info for profile view
         medicalCode: apiDoctor.medicalCode,
         contactInfo: apiDoctor.contactInfo,

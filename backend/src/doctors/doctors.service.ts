@@ -58,7 +58,7 @@ export class DoctorsService {
   async getMyProfile(user: User) {
     const profile =  this.doctorRepo.findOne({
       where: { user: { id: user.id } },
-      relations: ['categories','user'],
+      relations: ['category','user'],
     });
     return instanceToPlain(profile);
   }
@@ -67,7 +67,7 @@ export class DoctorsService {
     const profile = await this.doctorRepo.findOne({
       where: { id },
       relations: [
-        'categories',
+        'category',
         'user',
         'schedules', // 👈 load schedules
       ],
@@ -116,7 +116,7 @@ export class DoctorsService {
   async getAllDoctors() {
     const doctors = await this.doctorRepo.find({
       where: { isActive: true },
-      relations: ['categories','user'],
+      relations: ['category','user'],
     });
     return doctors.map((d) => instanceToPlain(d));
   }
