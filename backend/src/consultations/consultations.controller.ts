@@ -43,7 +43,6 @@ export class ConsultationsController {
   }
 
   @Post(':id/finish')
-  @Roles(UserRole.DOCTOR)
   async finishConsultation(
     @Param('id') id: number,
   ) {
