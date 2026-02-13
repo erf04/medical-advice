@@ -27,14 +27,14 @@ export class CategoriesService {
 
   async findAll() {
     return this.categoryRepo.find({
-      relations: ['doctors'],
+      relations: ['doctors','doctors.user'],
     });
   }
 
   async findOne(id: number) {
     const category = await this.categoryRepo.findOne({
       where: { id },
-      relations: ['doctors'],
+      relations: ['doctors','docrtors.user'],
     });
 
     if (!category) {

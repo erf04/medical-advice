@@ -1,6 +1,7 @@
 // src/categories/category.entity.ts
 import {
-  Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable
+  Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable,
+  OneToMany
 } from 'typeorm';
 import { DoctorProfile } from '../doctors/doctor-profile.entity';
 
@@ -15,7 +16,6 @@ export class Category {
   @Column({ nullable: true })
   description?: string;
 
-  @ManyToMany(() => DoctorProfile, (d) => d.category)
-  @JoinTable()
+  @OneToMany(() => DoctorProfile, (d) => d.category)
   doctors: DoctorProfile[];
 }

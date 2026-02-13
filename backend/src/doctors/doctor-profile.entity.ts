@@ -32,6 +32,7 @@ export class DoctorProfile {
   consultationPrice: number;
 
   @ManyToOne(() => Category, (c) => c.doctors)
+  @JoinColumn()
   category: Category;
 
   @Column({nullable: true})
