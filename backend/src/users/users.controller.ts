@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { profileImageStorage } from '../common/multer/profile-image.storage';
@@ -36,5 +36,12 @@ export class UsersController {
       message: 'Profile image updated',
       profileImage: imagePath,
     };
+  }
+
+
+  @Get('find-by-phone')
+  @UseGuards(AuthGuard)
+  async findByPhone(@Body('phone') phone: string) {
+    return this.userService.findOneByPhone(phone);
   }
 }

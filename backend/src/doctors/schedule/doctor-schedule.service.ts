@@ -194,7 +194,7 @@ export class DoctorScheduleService {
           remainingCapacity: Math.max(remaining, 0),
         };
       })
-      .filter(s => s.remainingCapacity > 0);
+      .filter(s => s.remainingCapacity >= 0);
   }
 
 
