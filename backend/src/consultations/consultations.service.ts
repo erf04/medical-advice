@@ -234,4 +234,12 @@ export class ConsultationService {
 
     return this.consultationRepo.save(consultation);
   }
+
+  async getConsultationsByUser(userId: number) {
+    log('Fetching consultations for user', userId);
+    return this.consultationRepo.find({
+      where: { patient: { user: { id: userId } } },
+      relations: ['doctor', 'doctor.user'],
+    });
+  }
 }

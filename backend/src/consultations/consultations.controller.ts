@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -32,5 +33,10 @@ export class ConsultationsController {
     @Param('id') id: number,
   ) {
     return this.consultationService.startConsultation(id, user.id);
+  }
+
+  @Get()
+  getConsultationByUser(@GetUser() user:User){
+    return this.consultationService.getConsultationsByUser(user.id)
   }
 }
