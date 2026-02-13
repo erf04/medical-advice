@@ -15,13 +15,13 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 
 @Controller('consultations')
-@UseGuards(AuthGuard,RolesGuard)
 export class ConsultationsController {
   constructor(
     private readonly consultationService: ConsultationService,
   ) {}
 
   @Post()
+  @UseGuards(AuthGuard,RolesGuard)
   create(
     @GetUser() user: User,
     @Body() dto: ReserveConsultationDto,
@@ -30,6 +30,7 @@ export class ConsultationsController {
   }
 
   @Post(':id/start')
+  @UseGuards(AuthGuard,RolesGuard)
   startConsultation(
     @GetUser() user: User,
     @Param('id') id: number,
@@ -38,6 +39,7 @@ export class ConsultationsController {
   }
 
   @Get()
+  @UseGuards(AuthGuard,RolesGuard)
   getConsultationByUser(@GetUser() user:User){
     return this.consultationService.getConsultationsByUser(user.id)
   }
