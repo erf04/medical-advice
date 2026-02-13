@@ -51,4 +51,28 @@ export class ConsultationChatService {
       fileMimeType: file.mimetype,
     };
   }
+
+  async loadConsultation(consultationId: number) {
+    const consultation = await this.repo.findOne({
+      where: { id: consultationId },
+      relations: ['doctor', 'doctor.user', 'patient', 'patient.user'],
+    });
+
+    if (!consultation) throw new NotFoundException('Consultation not found');
+
+
+    // 🔥 Load ALL messages
+    const messages = await this.messageRepo.find({
+      where: {
+        consultation: { id: consultationId },
+      },
+      relations: ['sender','consultation'],
+      order: {
+        createdAt: 'ASC',
+      },
+    });
+    return messages;
+  }
+
+
 }

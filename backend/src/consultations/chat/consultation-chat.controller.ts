@@ -1,6 +1,7 @@
 import {
-    BadRequestException,
+  BadRequestException,
   Controller,
+  Get,
   Param,
   Post,
   Req,
@@ -46,7 +47,15 @@ export class ConsultationChatController {
       },
     }),
   )
-  async uploadTempFile(@UploadedFile() file: Express.Multer.File, @GetUser() user: User) {
+  async uploadTempFile(
+    @UploadedFile() file: Express.Multer.File,
+    @GetUser() user: User,
+  ) {
     return this.consultationChatService.createTempFileToken(file, user.id);
+  }
+
+  @Get(':id/load')
+  async loadConsultation(@Param('id') id: number) {
+    return this.consultationChatService.loadConsultation(+id);
   }
 }

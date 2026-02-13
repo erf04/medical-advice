@@ -13,6 +13,7 @@ import { DoctorsModule } from './doctors/doctors.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ConsultationsModule } from './consultations/consultations.module';
 import { WalletModule } from './wallet/wallet.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WalletModule } from './wallet/wallet.module';
     CategoriesModule,
     ConsultationsModule,
     WalletModule,
+    ReviewsModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService, DatabaseService],

@@ -8,12 +8,14 @@ import {
 } from '@nestjs/common';
 import { ConsultationService } from './consultations.service';
 import { GetUser } from '../auth/auth.decorator';
-import { User } from '../users/users.entity';
+import { User, UserRole } from '../users/users.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { ReserveConsultationDto } from './dto/create-consultation.dto';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Controller('consultations')
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard,RolesGuard)
 export class ConsultationsController {
   constructor(
     private readonly consultationService: ConsultationService,
@@ -38,5 +40,15 @@ export class ConsultationsController {
   @Get()
   getConsultationByUser(@GetUser() user:User){
     return this.consultationService.getConsultationsByUser(user.id)
+  }
+
+  @Post(':id/finish')
+  @Roles(UserRole.DOCTOR)
+  async finishConsultation(
+    @Param('id') id: number,
+  ) {
+    return this.consultationService.finishConsultation(
+      +id
+    );
   }
 }

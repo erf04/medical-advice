@@ -241,4 +241,24 @@ export class ConsultationService {
       relations: ['doctor', 'doctor.user'],
     });
   }
+
+  async finishConsultation(consultationId: number) {
+    const consultation = await this.consultationRepo.findOne({
+      where: { id: consultationId },
+      relations: ['doctor', 'doctor.user', 'patient', 'patient.user'],
+    });
+
+    if (!consultation) throw new NotFoundException();
+
+    if (consultation.status !== ConsultationStatus.ACTIVE)
+      throw new BadRequestException('Consultation not active');
+
+
+    consultation.status = ConsultationStatus.FINISHED;
+    consultation.endedAt = new Date();
+
+    await this.consultationRepo.save(consultation);
+
+    return { message: 'Consultation finished' };
+  }
 }
