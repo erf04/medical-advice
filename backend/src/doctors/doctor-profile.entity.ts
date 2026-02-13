@@ -43,4 +43,11 @@ export class DoctorProfile {
     { cascade: true },
   )
   schedules: DoctorSchedule[];
+
+  @Column({ default: 0 })
+  averageRating: number;
+
+  @Column({ default: 0 })
+  totalReviews: number;
+
 }
