@@ -10,17 +10,24 @@ import { AuthModule } from '../auth/auth.module';
 import { DoctorsModule } from '../doctors/doctors.module';
 import { PatientsModule } from '../patients/patients.module';
 import { WalletModule } from '../wallet/wallet.module';
+import { ConsultationMessage } from './chat/consultation-message.entity';
+import { ChatGateway } from './chat/chat.gateway';
+import { TempFile } from './chat/temp-file.entity';
+import { ConsultationChatController } from './chat/consultation-chat.controller';
+import { ConsultationChatService } from './chat/consultation-chat.service';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([Consultation,DoctorProfile,PatientProfile,DoctorSchedule]),
+    TypeOrmModule.forFeature([Consultation,DoctorProfile,
+      PatientProfile,DoctorSchedule,ConsultationMessage,TempFile]),
     AuthModule,
     DoctorsModule,
     PatientsModule,
     WalletModule,
 
   ],
-  controllers: [ConsultationsController],
-  providers: [ConsultationService]
+  controllers: [ConsultationsController,ConsultationChatController],
+  providers: [ConsultationService,ChatGateway,ConsultationChatService],
+  exports:[ChatGateway,ConsultationService]
 })
 export class ConsultationsModule {}
