@@ -39,9 +39,11 @@ export class UsersController {
   }
 
 
-  @Get('find-by-phone')
+  @Post('find-by-phone')
   @UseGuards(AuthGuard)
   async findByPhone(@Body('phone') phone: string) {
     return this.userService.findOneByPhone(phone);
   }
+
+
 }
