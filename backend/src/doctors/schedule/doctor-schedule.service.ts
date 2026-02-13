@@ -60,18 +60,18 @@ export class DoctorScheduleService {
       );
     }
     const doctor = await this.doctorService.getMyProfile(user);
-    const existing = await this.scheduleRepo.findOne({
-      where: {
-        doctor: { id: doctor.id },
-        dayOfWeek: dto.dayOfWeek,
-      },
-    });
+    // const existing = await this.scheduleRepo.findOne({
+    //   where: {
+    //     doctor: { id: doctor.id },
+    //     dayOfWeek: dto.dayOfWeek,
+    //   },
+    // });
 
-    if (existing) {
-      existing.startTime = dto.startTime;
-      existing.endTime = dto.endTime;
-      return this.scheduleRepo.save(existing);
-    }
+    // if (existing) {
+    //   existing.startTime = dto.startTime;
+    //   existing.endTime = dto.endTime;
+    //   return this.scheduleRepo.save(existing);
+    // }
 
     const schedule = this.scheduleRepo.create({
       doctor,

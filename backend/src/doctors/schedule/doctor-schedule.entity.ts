@@ -9,7 +9,6 @@ import {
 import { DoctorProfile } from '../doctor-profile.entity';
 
 @Entity()
-@Unique(['doctor', 'dayOfWeek'])
 export class DoctorSchedule {
   @PrimaryGeneratedColumn()
   id: number;

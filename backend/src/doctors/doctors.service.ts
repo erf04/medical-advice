@@ -12,6 +12,7 @@ import { CreateDoctorProfileDto } from './dto/create-doctor-profile.dto';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Category } from '../categories/category.entity';
 import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
+import { log } from 'console';
 
 @Injectable()
 export class DoctorsService {
@@ -97,11 +98,24 @@ export class DoctorsService {
   }
 
   async getMyProfile(user: User) {
-    const profile = this.doctorRepo.findOne({
+    log('Getting doctor profile for user:', user.id);
+    const profile = await this.doctorRepo.findOne({
       where: { user: { id: user.id } },
-      relations: ['category', 'user'],
+      relations: [
+        'category',
+        'user',
+        'schedules', // 👈 load schedules
+      ],
+      order: {
+        schedules: {
+          startTime: 'ASC',
+        },
+      },
     });
-    return instanceToPlain(profile);
+    if (!profile) {
+      throw new BadRequestException('Doctor profile not found');
+    }
+    return profile;
   }
 
   async findProfileById(id: number) {
