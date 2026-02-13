@@ -173,4 +173,11 @@ export class WalletService {
       );
     });
   }
+
+  async getTransactionsByWallet(userId: number) {
+    return this.txRepo.find({
+      where: { wallet: { user: { id: userId } } },
+      order: { createdAt: 'DESC' },
+    });
+  }
 }

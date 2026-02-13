@@ -34,4 +34,11 @@ export class WalletController {
       Date.now() % 1_000_000 , // symbolic reference
     );
   }
+
+  @Get('transactions')
+  async getTransactions(@GetUser() user) {
+    return this.walletService.getTransactionsByWallet(
+      user.id
+    );
+  }
 }
