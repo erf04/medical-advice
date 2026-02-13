@@ -116,7 +116,7 @@ export class DoctorsService {
   async getAllDoctors() {
     const doctors = await this.doctorRepo.find({
       where: { isActive: true },
-      relations: ['categories','user'],
+      relations: ['category','user'],
     });
     return doctors.map((d) => instanceToPlain(d));
   }
