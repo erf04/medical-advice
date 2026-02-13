@@ -44,6 +44,11 @@ export class ConsultationsController {
     return this.consultationService.getConsultationsByUser(user.id)
   }
 
+  @Get('user/:id')
+  getConsultationByUserId(@Param('id') id: number) {
+    return this.consultationService.getConsultationsByUser(id);
+  }
+
   @Post(':id/finish')
   async finishConsultation(
     @Param('id') id: number,
