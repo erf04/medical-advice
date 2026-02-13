@@ -15,7 +15,7 @@ export class DoctorDashboardController {
     private readonly doctorDashboardService: DoctorDashboardService,
   ) {}
 
-  @Get('upcoming')
+  @Get()
   getUpcoming(@GetUser() user: User) {
     return this.doctorDashboardService.getUpcomingForDoctor(user.id);
   }
