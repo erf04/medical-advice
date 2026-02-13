@@ -714,6 +714,7 @@ export default {
       
       signupData: {
         profileImage: null,
+        profileImageFile: null, // Store the actual file for upload
         firstName: '',
         lastName: '',
         useEmail: true,
@@ -799,6 +800,7 @@ export default {
     resetSignupData() {
       this.signupData = {
         profileImage: null,
+        profileImageFile: null,
         firstName: '',
         lastName: '',
         useEmail: true,
@@ -915,6 +917,10 @@ export default {
         return
       }
       
+      // Store the actual file for API upload
+      this.signupData.profileImageFile = file
+      
+      // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
         this.signupData.profileImage = e.target.result
@@ -924,6 +930,7 @@ export default {
     
     removeProfileImage() {
       this.signupData.profileImage = null
+      this.signupData.profileImageFile = null
       this.$refs.fileInput.value = ''
     },
     
@@ -992,11 +999,17 @@ export default {
           
           // Store authentication data
           this.accessToken = data.accessToken
-          this.userRole = data.role
+          this.userRole = data.user.role
           
           localStorage.setItem('authToken', data.accessToken)
           localStorage.setItem('userData', JSON.stringify(data.user))
-          localStorage.setItem('userId',data.id)
+          console.log(this.userRole)
+          if (this.userRole === 'doctor'){
+            console.log(99999999999)
+            console.log(data.user.doctorProfile.id)
+            localStorage.setItem('userId',data.user.doctorProfile.id)
+          }
+          
           
           // Redirect based on role
           setTimeout(() => {
@@ -1017,6 +1030,34 @@ export default {
         this.showMessage('Network error. Please check your connection.', 'error')
       } finally {
         this.isLoading = false
+      }
+    },
+    
+    async uploadProfileImage() {
+      if (!this.signupData.profileImageFile) return;
+      
+      try {
+        const formData = new FormData();
+        formData.append('file', this.signupData.profileImageFile);
+        
+        const response = await fetch(`${this.apiBaseUrl}/users/profile-image/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.accessToken}`
+          },
+          body: formData
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to upload profile image');
+        }
+        
+        console.log('Profile image uploaded successfully');
+      } catch (error) {
+        console.error('Profile image upload error:', error);
+        // Don't throw - we don't want to fail the whole signup just for image upload
+        this.showMessage('Profile image upload failed, but account was created', 'error');
       }
     },
     
@@ -1058,11 +1099,16 @@ export default {
         
         console.log('Registration successful:', registerData)
         
-        // Store the access token for the next API call
+        // Store the access token for the next API calls
         this.accessToken = registerData.accessToken
         this.userRole = registerData.user.role
         
-        // Step 2: Complete profile based on role
+        // Step 2: Upload profile image if selected
+        if (this.signupData.profileImageFile) {
+          await this.uploadProfileImage();
+        }
+        
+        // Step 3: Complete profile based on role
         if (this.signupData.isDoctor) {
           // Complete doctor profile
           const doctorProfilePayload = {
@@ -1156,6 +1202,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 /* Base Styles */

@@ -27,7 +27,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
               </svg>
-              My Profile
+              Doctors
             </div>
             <div class="menu-item" @click="goToConsultants">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -450,7 +450,7 @@ export default {
       error: null,
       
       // User data
-      userProfileImage: 'https://images.unsplash.com/photo-1494790108755-2616b786d4d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+      userProfileImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
       showProfileMenu: false,
       
       // Search and filters
@@ -481,7 +481,7 @@ export default {
       ],
       
       // Default doctor image
-      defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
+      defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
     }
   },
   
@@ -787,7 +787,7 @@ export default {
     
     viewDoctorDetails(doctor) {
       // Navigate to doctor details page
-      this.$router.push(`/doctor/${doctor.id}`)
+      this.$router.push(`/doctor/profile/${doctor.id}`)
     },
     
     viewDoctorProfile(doctor) {
@@ -814,13 +814,13 @@ export default {
       if (userData.role === 'doctor') {
         this.$router.push('/mypannel')
       } else {
-        this.$router.push('/patient-dashboard')
+        this.$router.push('/profile')
       }
       this.showProfileMenu = false
     },
     
     goToConsultants() {
-      this.$router.push('/my-consultants')
+      this.$router.push('/consultants')
       this.showProfileMenu = false
     },
     

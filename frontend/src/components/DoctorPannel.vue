@@ -47,13 +47,19 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
               </svg>
-              My Profile
+              Dashboard
             </div>
             <div class="menu-item" @click="goToConsultants">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.786 0 011.019-4.38z" clip-rule="evenodd" />
               </svg>
               My Consultants
+            </div>
+            <div class="menu-item" @click="goToConsultants">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.786 0 011.019-4.38z" clip-rule="evenodd" />
+              </svg>
+              My Reviews
             </div>
 
             <div class="menu-item logout" @click="handleLogout">
@@ -136,6 +142,46 @@
             </div>
           </div>
 
+          <!-- Schedule Management Section -->
+          <div class="schedule-section">
+            <div class="section-header">
+              <h3 class="section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3a.75.75 0 011.5 0v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd" />
+                </svg>
+                Weekly Schedule
+              </h3>
+              <button class="add-schedule-btn" @click="showAddScheduleModal = true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+                </svg>
+                Add Time Slot
+              </button>
+            </div>
+
+            <div class="schedule-grid">
+              <div v-for="day in weekDays" :key="day.id" class="schedule-day-card">
+                <div class="day-header">
+                  <h4>{{ day.name }}</h4>
+                  <span class="slot-count">{{ getScheduleCount(day.id) }} slots</span>
+                </div>
+                <div class="time-slots-list">
+                  <div v-if="getScheduleSlots(day.id).length === 0" class="no-slots">
+                    No time slots
+                  </div>
+                  <div v-else v-for="slot in getScheduleSlots(day.id)" :key="slot.id" class="time-slot-item">
+                    <span>{{ slot.startTime }} - {{ slot.endTime }}</span>
+                    <button class="delete-slot-btn" @click="deleteScheduleSlot(day.id, slot.id)" title="Delete slot">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.5-.058l-.346 9a.75.75 0 101.499.058l.347-9z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Two Column Layout -->
           <div class="doctor-columns">
             <!-- Left Column: Profile & Settings -->
@@ -166,7 +212,7 @@
                 <div class="profile-details">
                   <div class="detail-row">
                     <span class="detail-label">Medical License:</span>
-                    <span class="detail-value">{{ doctor.medicalLicense || 'N/A' }}</span>
+                    <span class="detail-value">{{ doctor.medicalCode || 'N/A' }}</span>
                   </div>
                   <div class="detail-row">
                     <span class="detail-label">Email:</span>
@@ -181,8 +227,14 @@
                     <span class="detail-value">{{ doctor.experience || 0 }} years</span>
                   </div>
                   <div class="detail-row">
-                    <span class="detail-label">Clinic Address:</span>
-                    <span class="detail-value">{{ doctor.address || 'N/A' }}</span>
+                    <span class="detail-label">Category:</span>
+                    <span class="detail-value">{{ doctor.category || 'Not specified' }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value" :class="{ 'active-status': doctor.isActive }">
+                      {{ doctor.isActive ? 'Active' : 'Inactive' }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -196,41 +248,19 @@
                   Practice Settings
                 </h3>
                 
-                <div class="setting-item">
-                  <div class="setting-info">
-                    <h4>Consultation Cost</h4>
-                    <p>Set your fee per consultation session</p>
-                  </div>
-                  <div class="setting-control">
-                    <div class="price-input">
-                      <span class="currency">$</span>
-                      <input 
-                        type="number" 
-                        v-model="doctor.consultationFee"
-                        min="10"
-                        max="1000"
-                        step="5"
-                        @keyup.enter="updateConsultationFee"
-                      />
-                    </div>
-                    <button class="save-btn" @click="updateConsultationFee" :disabled="savingConsultationFee">
-                      <span v-if="savingConsultationFee" class="save-spinner"></span>
-                      <span v-else>Save</span>
-                    </button>
-                  </div>
-                </div>
+                
 
                 <div class="setting-item">
                   <div class="setting-info">
                     <h4>Maximum Concurrent Patients</h4>
-                    <p>Maximum number of patients you can consult simultaneously in a time slot</p>
+                    <p>Maximum number of patients you can consult simultaneously</p>
                   </div>
                   <div class="setting-control">
                     <div class="number-input">
                       <button class="number-btn minus" @click="decreaseMaxPatients">-</button>
                       <input 
                         type="number" 
-                        v-model="doctor.maxConcurrentPatients"
+                        v-model="doctor.maxConcurrentConsultations"
                         min="1"
                         max="10"
                         @keyup.enter="updateMaxPatients"
@@ -244,42 +274,9 @@
                   </div>
                 </div>
 
-                <div class="setting-item">
-                  <div class="setting-info">
-                    <h4>Consultation Duration</h4>
-                    <p>Duration of each consultation session (minutes)</p>
-                  </div>
-                  <div class="setting-control">
-                    <div class="duration-options">
-                      <button 
-                        v-for="duration in durationOptions" 
-                        :key="duration"
-                        :class="['duration-btn', { active: doctor.consultationDuration === duration }]"
-                        @click="doctor.consultationDuration = duration"
-                      >
-                        {{ duration }} min
-                      </button>
-                    </div>
-                    <button class="save-btn" @click="updateConsultationDuration" :disabled="savingConsultationDuration">
-                      <span v-if="savingConsultationDuration" class="save-spinner"></span>
-                      <span v-else>Save</span>
-                    </button>
-                  </div>
-                </div>
+                
 
-                <div class="setting-item">
-                  <div class="setting-info">
-                    <h4>Availability Status</h4>
-                    <p>Toggle your availability for new consultations</p>
-                  </div>
-                  <div class="setting-control">
-                    <label class="toggle-switch">
-                      <input type="checkbox" v-model="doctor.isAvailable" @change="updateAvailability">
-                      <span class="toggle-slider"></span>
-                    </label>
-                    <span class="status-text">{{ doctor.isAvailable ? 'Available' : 'Not Available' }}</span>
-                  </div>
-                </div>
+                
               </div>
             </div>
 
@@ -301,9 +298,8 @@
                   <span class="balance-label">Current Balance</span>
                   <div class="balance-amount">
                     <span class="currency">$</span>
-                    <span class="amount">{{ formatNumber(doctor.walletBalance) }}</span>
+                    <span class="amount">{{ formatNumber(walletBalance) }}</span>
                   </div>
-                  <span class="balance-note">Pending: ${{ formatNumber(doctor.pendingBalance) }}</span>
                 </div>
 
                 <div class="wallet-actions">
@@ -321,21 +317,6 @@
                   </button>
                 </div>
 
-                <div class="withdrawal-info">
-                  <div class="info-row">
-                    <span class="info-label">Last Withdrawal</span>
-                    <span class="info-value">{{ formatDate(doctor.lastWithdrawal) }}</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="info-label">Total Withdrawn</span>
-                    <span class="info-value">${{ formatNumber(doctor.totalWithdrawn) }}</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="info-label">Available for Withdrawal</span>
-                    <span class="info-value success">${{ formatNumber(doctor.availableForWithdrawal) }}</span>
-                  </div>
-                </div>
-
                 <div class="withdrawal-note">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
@@ -344,7 +325,7 @@
                 </div>
               </div>
 
-              <!-- Income History -->
+              <!-- Transaction History -->
               <div class="income-history">
                 <div class="section-header">
                   <h3 class="section-title">
@@ -352,9 +333,9 @@
                       <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
                       <path fill-rule="evenodd" d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z" clip-rule="evenodd" />
                     </svg>
-                    Recent Income History
+                    Transaction History
                   </h3>
-                  <button class="view-all-btn" @click="viewAllIncomeHistory">
+                  <button class="view-all-btn" @click="viewAllTransactions">
                     View All
                   </button>
                 </div>
@@ -376,37 +357,38 @@
                     <span class="summary-value">${{ formatNumber(incomeSummary.total) }}</span>
                   </div>
                   <div class="summary-card">
-                    <span class="summary-label">Consultations</span>
-                    <span class="summary-value">{{ incomeSummary.consultations }}</span>
+                    <span class="summary-label">Transactions</span>
+                    <span class="summary-value">{{ incomeSummary.transactions }}</span>
                   </div>
                   <div class="summary-card">
-                    <span class="summary-label">Avg. per Consultation</span>
+                    <span class="summary-label">Avg. per Transaction</span>
                     <span class="summary-value">${{ formatNumber(incomeSummary.average) }}</span>
                   </div>
                 </div>
 
                 <div class="income-list">
-                  <div v-if="filteredIncome.length === 0" class="empty-income">
+                  <div v-if="filteredTransactions.length === 0" class="empty-income">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                       <path fill-rule="evenodd" d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z" clip-rule="evenodd" />
                     </svg>
-                    <p>No income records for this period</p>
+                    <p>No transactions for this period</p>
                   </div>
 
                   <div v-else>
                     <div 
-                      v-for="income in filteredIncome" 
-                      :key="income.id"
+                      v-for="transaction in filteredTransactions" 
+                      :key="transaction.id"
                       class="income-item"
                     >
                       <div class="income-info">
-                        <h4 class="income-patient">{{ income.patientName }}</h4>
-                        <p class="income-date">{{ formatDate(income.date) }} • {{ income.time }}</p>
-                        <span class="income-type">{{ income.type }}</span>
+                        <h4 class="income-patient">{{ getTransactionType(transaction.type) }}</h4>
+                        <p class="income-date">{{ formatDate(transaction.createdAt) }}</p>
+                        <span class="income-type">{{ transaction.referenceType }}</span>
                       </div>
                       <div class="income-amount">
-                        <span class="amount">${{ formatNumber(income.amount) }}</span>
-                        <span class="status-badge" :class="income.status">{{ income.status }}</span>
+                        <span class="amount" :class="{ 'positive': transaction.type === 'DEPOSIT', 'negative': transaction.type !== 'DEPOSIT' }">
+                          {{ transaction.type === 'DEPOSIT' ? '+' : '-' }}${{ formatNumber(transaction.amount) }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -418,10 +400,70 @@
       </div>
     </div>
 
+    <!-- Add Schedule Modal -->
+    <div v-if="showAddScheduleModal" class="modal-overlay" @click.self="closeScheduleModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Add Time Slot</h3>
+          <button class="modal-close" @click="closeScheduleModal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <form @submit.prevent="addScheduleSlot">
+            <div class="form-group">
+              <label for="dayOfWeek">Day of Week <span class="required">*</span></label>
+              <select id="dayOfWeek" v-model="newSchedule.dayOfWeek" required>
+                <option value="">Select Day</option>
+                <option v-for="day in weekDays" :key="day.id" :value="day.id">
+                  {{ day.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="startTime">Start Time <span class="required">*</span></label>
+                <input 
+                  type="time" 
+                  id="startTime" 
+                  v-model="newSchedule.startTime"
+                  required
+                />
+              </div>
+              
+              <div class="form-group">
+                <label for="endTime">End Time <span class="required">*</span></label>
+                <input 
+                  type="time" 
+                  id="endTime" 
+                  v-model="newSchedule.endTime"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div class="modal-footer">
+              <button type="button" class="modal-btn secondary" @click="closeScheduleModal">
+                Cancel
+              </button>
+              <button type="submit" class="modal-btn primary" :disabled="savingSchedule">
+                <span v-if="savingSchedule" class="spinner-small"></span>
+                <span v-else>Add Slot</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Withdrawal Modal -->
     <WithdrawalModal
       v-if="showWithdrawalModal"
-      :availableBalance="doctor.availableForWithdrawal"
+      :availableBalance="walletBalance"
       :withdrawalMethods="withdrawalMethods"
       @close="closeWithdrawalModal"
       @submit="processWithdrawal"
@@ -443,6 +485,7 @@
 // Import components if you want to split them
 // import WithdrawalModal from './WithdrawalModal.vue'
 // import SuccessModal from './SuccessModal.vue'
+import moment from 'moment';
 
 export default {
   name: 'DoctorPanel',
@@ -458,21 +501,38 @@ export default {
       error: null,
       showProfileMenu: false,
       selectedPeriod: 'Today',
+      showAddScheduleModal: false,
+      savingSchedule: false,
+      
+      // API Configuration
+      apiBaseUrl: 'http://localhost:8000',
+      doctorId: null,
       
       // Doctor data with default values
       doctor: {
-        consultationFee: 0,
-        maxConcurrentPatients: 1,
+        consultationPrice: 0,
+        maxConcurrentConsultations: 1,
         consultationDuration: 30,
-        isAvailable: false,
-        walletBalance: 0,
-        pendingBalance: 0,
-        availableForWithdrawal: 0,
-        totalWithdrawn: 0,
+        isActive: false,
         firstName: '',
         lastName: '',
-        specialty: ''
+        specialty: '',
+        medicalCode: '',
+        email: '',
+        phone: '',
+        experience: 0,
+        category: null,
+        profileImage: null,
+        isVerified: false,
+        walletId: null
       },
+      
+      // Schedule data
+      schedules: {},
+      
+      // Wallet data
+      walletBalance: 0,
+      transactions: [],
       
       stats: {
         totalPatients: 0,
@@ -481,9 +541,16 @@ export default {
         rating: 0
       },
       
+      // New schedule form
+      newSchedule: {
+        dayOfWeek: '',
+        startTime: '',
+        endTime: ''
+      },
+      
       // Settings
       durationOptions: [15, 30, 45, 60],
-      savingConsultationFee: false,
+      savingConsultationPrice: false,
       savingMaxPatients: false,
       savingConsultationDuration: false,
       savingAvailability: false,
@@ -521,28 +588,36 @@ export default {
         }
       ],
       
-      // Income history data
-      incomeHistory: [],
-      
       // Default images
-      defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
+      defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+      
+      // Week days mapping (0 = Saturday)
+      weekDays: [
+        { id: 0, name: 'Saturday' },
+        { id: 1, name: 'Sunday' },
+        { id: 2, name: 'Monday' },
+        { id: 3, name: 'Tuesday' },
+        { id: 4, name: 'Wednesday' },
+        { id: 5, name: 'Thursday' },
+        { id: 6, name: 'Friday' }
+      ]
     }
   },
   
   computed: {
     incomeSummary() {
-      const filtered = this.filteredIncome
-      const total = filtered.reduce((sum, income) => sum + (income.amount || 0), 0)
+      const filtered = this.filteredTransactions
+      const total = filtered.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0)
       const average = filtered.length > 0 ? total / filtered.length : 0
       
       return {
         total,
-        consultations: filtered.length,
+        transactions: filtered.length,
         average
       }
     },
     
-    filteredIncome() {
+    filteredTransactions() {
       const now = new Date()
       let startDate = new Date()
       
@@ -560,12 +635,12 @@ export default {
           startDate.setFullYear(now.getFullYear() - 1)
           break
         case 'All':
-          return this.incomeHistory
+          return this.transactions
       }
       
-      return this.incomeHistory.filter(income => {
-        const incomeDate = new Date(income.date)
-        return incomeDate >= startDate
+      return this.transactions.filter(tx => {
+        const txDate = new Date(tx.createdAt)
+        return txDate >= startDate
       })
     },
     
@@ -583,7 +658,7 @@ export default {
       const amount = parseFloat(this.withdrawalAmount)
       return amount && 
              amount >= 10 && 
-             amount <= this.doctor.availableForWithdrawal && 
+             amount <= this.walletBalance && 
              !this.withdrawalAmountError && 
              this.selectedWithdrawalMethod
     }
@@ -591,7 +666,6 @@ export default {
   
   watch: {
     withdrawalAmount(newVal) {
-        console.log(newVal);
       this.validateWithdrawalAmount()
     }
   },
@@ -606,9 +680,14 @@ export default {
       this.error = null
       
       try {
+        // Get doctor ID from user data
+        const userId = JSON.parse(localStorage.getItem('userId') || '{}')
+        this.doctorId = userId
+        
         await Promise.all([
           this.fetchDoctorData(),
-          this.fetchIncomeHistory()
+          this.fetchWalletBalance(),
+          this.fetchTransactions()
         ])
       } catch (err) {
         console.error('Error loading dashboard data:', err)
@@ -624,39 +703,54 @@ export default {
     
     async fetchDoctorData() {
       try {
-        // Mock doctor data - in real app, this would be an API call
-        // Using setTimeout to simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500))
+        const authToken = localStorage.getItem('authToken')
         
-        this.doctor = {
-          id: 'DOC-2023-00123',
-          firstName: 'James',
-          lastName: 'Wilson',
-          profileImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-          specialty: 'Cardiology',
-          medicalLicense: 'CA-7890123',
-          email: 'dr.james.wilson@medical.com',
-          phone: '+1 (555) 987-6543',
-          experience: 15,
-          address: '123 Medical Center Dr, Health City, HC 12345',
-          isVerified: true,
-          consultationFee: 250,
-          maxConcurrentPatients: 3,
-          consultationDuration: 30,
-          isAvailable: true,
-          walletId: 'DR-WLT-04567',
-          walletBalance: 15250.75,
-          pendingBalance: 3250.50,
-          availableForWithdrawal: 12000.25,
-          lastWithdrawal: new Date('2023-10-15'),
-          totalWithdrawn: 45000.50
+        if (!authToken) {
+          throw new Error('Authentication required')
         }
         
+        const response = await fetch(`${this.apiBaseUrl}/doctors/${this.doctorId}/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch doctor data')
+        }
+        
+        const data = await response.json()
+        
+        this.doctor = {
+          id: data.id,
+          firstName: data.user?.firstName || '',
+          lastName: data.user?.lastName || '',
+          email: data.user?.email || '',
+          phone: data.user?.phone || '',
+          profileImage: data.user?.profileImage || this.defaultDoctorImage,
+          medicalCode: data.medicalCode || 'N/A',
+          contactInfo: data.contactInfo || 'N/A',
+          isActive: data.isActive || false,
+          maxConcurrentConsultations: data.maxConcurrentConsultations || 1,
+          consultationPrice: data.consultationPrice || 0,
+          category: data.category || 'Not specified',
+          commissionPercent: data.commissionPercent || 0,
+          isVerified: !!data.medicalCode,
+          experience: this.calculateExperience(data.user?.createdAt),
+          specialty: data.category || 'General Medicine'
+        }
+        
+        // Store schedules
+        this.schedules = data.schedules || {}
+        
+        // Update stats
         this.stats = {
-          totalPatients: 524,
-          totalConsultations: 1843,
-          totalEarnings: 15250.75,
-          rating: 4.8
+          totalPatients: data.patientCount || 0,
+          totalConsultations: data.consultationCount || 0,
+          totalEarnings: this.calculateTotalEarnings(),
+          rating: data.averageRating || 0
         }
         
       } catch (err) {
@@ -665,62 +759,257 @@ export default {
       }
     },
     
-    async fetchIncomeHistory() {
+    async fetchWalletBalance() {
       try {
-        // Mock income history data
-        const now = new Date()
-        this.incomeHistory = [
-          {
-            id: 'INC-001',
-            patientName: 'John Smith',
-            date: new Date(now.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
-            time: '10:30 AM',
-            type: 'Online Consultation',
-            amount: 250,
-            status: 'completed'
-          },
-          {
-            id: 'INC-002',
-            patientName: 'Sarah Johnson',
-            date: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-            time: '2:15 PM',
-            type: 'Video Consultation',
-            amount: 250,
-            status: 'completed'
-          },
-          {
-            id: 'INC-003',
-            patientName: 'Michael Chen',
-            date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-            time: '11:00 AM',
-            type: 'Phone Consultation',
-            amount: 200,
-            status: 'completed'
-          },
-          {
-            id: 'INC-004',
-            patientName: 'Lisa Rodriguez',
-            date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-            time: '4:30 PM',
-            type: 'Online Consultation',
-            amount: 250,
-            status: 'pending'
-          },
-          {
-            id: 'INC-005',
-            patientName: 'Robert Kim',
-            date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-            time: '9:45 AM',
-            type: 'Video Consultation',
-            amount: 250,
-            status: 'completed'
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/wallet/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
           }
-        ]
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch wallet balance')
+        }
+        
+        const data = await response.json()
+        this.walletBalance = parseFloat(data.balance) || 0
         
       } catch (err) {
-        console.error('Error fetching income history:', err)
-        throw new Error('Failed to load income history')
+        console.error('Error fetching wallet balance:', err)
+        // Don't throw, just log error
       }
+    },
+    
+    async fetchTransactions() {
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/wallet/transactions/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch transactions')
+        }
+        
+        const data = await response.json()
+        this.transactions = data || []
+        
+      } catch (err) {
+        console.error('Error fetching transactions:', err)
+        this.transactions = []
+      }
+    },
+    
+    async updateMaxPatients() {
+      if (this.savingMaxPatients) return
+      
+      this.savingMaxPatients = true
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/doctors/profile/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            maxConcurrentConsultations: this.doctor.maxConcurrentConsultations
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to update max patients')
+        }
+        
+        // this.$toast.success('Maximum concurrent patients updated successfully!')
+      } catch (err) {
+        console.error('Error updating max patients:', err)
+        // this.$toast.error('Failed to update maximum patients')
+      } finally {
+        this.savingMaxPatients = false
+      }
+    },
+    
+    async updateConsultationPrice() {
+      if (this.savingConsultationPrice) return
+      
+      this.savingConsultationPrice = true
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/doctors/profile/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            consultationPrice: this.doctor.consultationPrice
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to update consultation price')
+        }
+        
+        // this.$toast.success('Consultation price updated successfully!')
+      } catch (err) {
+        console.error('Error updating consultation price:', err)
+        // this.$toast.error('Failed to update consultation price')
+      } finally {
+        this.savingConsultationPrice = false
+      }
+    },
+    
+    async updateAvailability() {
+      if (this.savingAvailability) return
+      
+      this.savingAvailability = true
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/doctors/profile/`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            isActive: this.doctor.isActive
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to update availability')
+        }
+        
+        // this.$toast.success(`You are now ${this.doctor.isActive ? 'available' : 'not available'} for consultations`)
+      } catch (err) {
+        console.error('Error updating availability:', err)
+        // this.$toast.error('Failed to update availability')
+        this.doctor.isActive = !this.doctor.isActive
+      } finally {
+        this.savingAvailability = false
+      }
+    },
+    
+    async addScheduleSlot() {
+      if (!this.newSchedule.dayOfWeek || !this.newSchedule.startTime || !this.newSchedule.endTime) return
+      
+      this.savingSchedule = true
+      
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/doctors/schedule/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            dayOfWeek: parseInt(this.newSchedule.dayOfWeek),
+            startTime: this.newSchedule.startTime,
+            endTime: this.newSchedule.endTime
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to add schedule slot')
+        }
+        
+        const newSlot = await response.json()
+        
+        // Add to local schedules
+        const dayKey = this.newSchedule.dayOfWeek.toString()
+        if (!this.schedules[dayKey]) {
+          this.schedules[dayKey] = []
+        }
+        this.schedules[dayKey].push(newSlot)
+        
+        this.closeScheduleModal()
+        // this.$toast.success('Time slot added successfully!')
+        
+      } catch (err) {
+        console.error('Error adding schedule slot:', err)
+        // this.$toast.error('Failed to add time slot')
+      } finally {
+        this.savingSchedule = false
+      }
+    },
+    
+    async deleteScheduleSlot(dayOfWeek, slotId) {
+      if (!confirm('Are you sure you want to delete this time slot?')) return
+      
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        // Note: You might need an API endpoint for deleting schedule slots
+        // This is a placeholder - adjust according to your API
+        const response = await fetch(`${this.apiBaseUrl}/doctors/schedule/${slotId}/`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete schedule slot')
+        }
+        
+        // Remove from local schedules
+        const dayKey = dayOfWeek.toString()
+        if (this.schedules[dayKey]) {
+          this.schedules[dayKey] = this.schedules[dayKey].filter(slot => slot.id !== slotId)
+        }
+        
+        // this.$toast.success('Time slot deleted successfully!')
+        
+      } catch (err) {
+        console.error('Error deleting schedule slot:', err)
+        // this.$toast.error('Failed to delete time slot')
+      }
+    },
+    
+    getScheduleCount(dayOfWeek) {
+      return this.schedules[dayOfWeek.toString()]?.length || 0
+    },
+    
+    getScheduleSlots(dayOfWeek) {
+      return this.schedules[dayOfWeek.toString()] || []
+    },
+    
+    getTransactionType(type) {
+      const types = {
+        'CONSULTATION_PAY': 'Consultation Payment',
+        'DEPOSIT': 'Wallet Deposit',
+        'WITHDRAWAL': 'Withdrawal'
+      }
+      return types[type] || type
+    },
+    
+    calculateExperience(createdAt) {
+      if (!createdAt) return 0
+      const start = new Date(createdAt)
+      const now = new Date()
+      const years = now.getFullYear() - start.getFullYear()
+      return Math.max(0, years)
+    },
+    
+    calculateTotalEarnings() {
+      return this.transactions
+        .filter(tx => tx.type === 'CONSULTATION_PAY')
+        .reduce((sum, tx) => sum + parseFloat(tx.amount), 0)
     },
     
     formatNumber(value, decimals = 2) {
@@ -734,102 +1023,42 @@ export default {
       if (!date) return 'N/A'
       
       try {
-        if (typeof date === 'string') {
-          date = new Date(date)
-        }
-        
-        if (!(date instanceof Date) || isNaN(date.getTime())) {
-          return 'N/A'
-        }
-        
-        return date.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
-        })
+        return moment(date).format('MMM D, YYYY • HH:mm')
       } catch (err) {
-        console.error('Error formatting date:', err)
         return 'N/A'
       }
     },
     
-    // Practice Settings Methods
+    // Schedule Methods
     increaseMaxPatients() {
-      if (this.doctor.maxConcurrentPatients < 10) {
-        this.doctor.maxConcurrentPatients++
+      if (this.doctor.maxConcurrentConsultations < 10) {
+        this.doctor.maxConcurrentConsultations++
       }
     },
     
     decreaseMaxPatients() {
-      if (this.doctor.maxConcurrentPatients > 1) {
-        this.doctor.maxConcurrentPatients--
+      if (this.doctor.maxConcurrentConsultations > 1) {
+        this.doctor.maxConcurrentConsultations--
       }
     },
     
-    async updateConsultationFee() {
-      if (this.savingConsultationFee) return
-      
-      this.savingConsultationFee = true
-      try {
-        // In real app: API call to update consultation fee
-        await new Promise(resolve => setTimeout(resolve, 800))
-        // Show success message
-        this.$toast.success('Consultation fee updated successfully!')
-      } catch (err) {
-        console.error('Error updating consultation fee:', err)
-        this.$toast.error('Failed to update consultation fee')
-      } finally {
-        this.savingConsultationFee = false
-      }
-    },
-    
-    async updateMaxPatients() {
-      if (this.savingMaxPatients) return
-      
-      this.savingMaxPatients = true
-      try {
-        // In real app: API call to update max patients
-        await new Promise(resolve => setTimeout(resolve, 800))
-        this.$toast.success('Maximum concurrent patients updated successfully!')
-      } catch (err) {
-        console.error('Error updating max patients:', err)
-        this.$toast.error('Failed to update maximum patients')
-      } finally {
-        this.savingMaxPatients = false
-      }
-    },
-    
-    async updateConsultationDuration() {
+    updateConsultationDuration() {
       if (this.savingConsultationDuration) return
       
       this.savingConsultationDuration = true
-      try {
-        // In real app: API call to update consultation duration
-        await new Promise(resolve => setTimeout(resolve, 800))
-        this.$toast.success('Consultation duration updated successfully!')
-      } catch (err) {
-        console.error('Error updating consultation duration:', err)
-        this.$toast.error('Failed to update consultation duration')
-      } finally {
+      setTimeout(() => {
+        // this.$toast.success('Consultation duration updated successfully!')
         this.savingConsultationDuration = false
-      }
+      }, 800)
     },
     
-    async updateAvailability() {
-      if (this.savingAvailability) return
-      
-      this.savingAvailability = true
-      try {
-        // In real app: API call to update availability
-        await new Promise(resolve => setTimeout(resolve, 800))
-        this.$toast.success(`You are now ${this.doctor.isAvailable ? 'available' : 'not available'} for consultations`)
-      } catch (err) {
-        console.error('Error updating availability:', err)
-        this.$toast.error('Failed to update availability')
-        // Revert the toggle on error
-        this.doctor.isAvailable = !this.doctor.isAvailable
-      } finally {
-        this.savingAvailability = false
+    // Schedule Modal
+    closeScheduleModal() {
+      this.showAddScheduleModal = false
+      this.newSchedule = {
+        dayOfWeek: '',
+        startTime: '',
+        endTime: ''
       }
     },
     
@@ -861,8 +1090,8 @@ export default {
         return
       }
       
-      if (amount > this.doctor.availableForWithdrawal) {
-        this.withdrawalAmountError = `Cannot withdraw more than available balance ($${this.formatNumber(this.doctor.availableForWithdrawal)})`
+      if (amount > this.walletBalance) {
+        this.withdrawalAmountError = `Cannot withdraw more than available balance ($${this.formatNumber(this.walletBalance)})`
         return
       }
       
@@ -870,7 +1099,6 @@ export default {
     },
     
     async processWithdrawal(withdrawalData) {
-      // This would be called from the WithdrawalModal component
       this.processingWithdrawal = true
       
       try {
@@ -879,22 +1107,18 @@ export default {
         // In real app: API call to submit withdrawal request
         await new Promise(resolve => setTimeout(resolve, 1500))
         
-        // Generate random request ID
         this.withdrawalRequestId = 'WDR-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
         this.withdrawalAmount = amount
         this.selectedWithdrawalMethod = withdrawalData.methodId
         
-        // Update doctor's wallet balance
-        this.doctor.availableForWithdrawal -= amount
-        this.doctor.walletBalance -= amount
+        this.walletBalance -= amount
         
-        // Show success modal
         this.showWithdrawalModal = false
         this.showSuccessModal = true
         
       } catch (err) {
         console.error('Error processing withdrawal:', err)
-        this.$toast.error('Failed to submit withdrawal request. Please try again.')
+        // this.$toast.error('Failed to submit withdrawal request. Please try again.')
       } finally {
         this.processingWithdrawal = false
       }
@@ -918,20 +1142,23 @@ export default {
       this.$router.push('/doctor/consultants')
     },
     
-    viewAllIncomeHistory() {
-      this.$router.push('/doctor/income-history')
+    viewAllTransactions() {
+      this.$router.push('/doctor/transactions')
     },
     
     viewWithdrawalHistory() {
       this.$router.push('/doctor/withdrawal-history')
     },
     
+    viewAllIncomeHistory() {
+      this.$router.push('/doctor/transactions')
+    },
+    
     changeAvatar() {
-      this.$toast.info('Avatar change functionality coming soon!')
+      // this.$toast.info('Avatar change functionality coming soon!')
     },
     
     goToProfile() {
-      // Already on profile
       this.showProfileMenu = false
     },
     
@@ -940,15 +1167,187 @@ export default {
     },
     
     handleLogout() {
-      // In real app: Clear auth token, etc.
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('userData')
       this.$router.push('/login')
     }
   }
 }
 </script>
 
-
 <style scoped>
+/* Add these new styles */
+.schedule-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.schedule-day-card {
+  background: #f7f9fc;
+  border-radius: 16px;
+  padding: 20px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.schedule-day-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.day-header h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.slot-count {
+  padding: 4px 10px;
+  background: #667eea;
+  color: white;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.time-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.time-slots-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.time-slots-list::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+
+.time-slots-list::-webkit-scrollbar-thumb {
+  background: #a0aec0;
+  border-radius: 2px;
+}
+
+.time-slot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2d3748;
+  transition: all 0.2s ease;
+}
+
+.time-slot-item:hover {
+  border-color: #cbd5e0;
+}
+
+.delete-slot-btn {
+  width: 28px;
+  height: 28px;
+  background: #f7f9fc;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #718096;
+}
+
+.delete-slot-btn:hover {
+  background: #fed7d7;
+  border-color: #fc8181;
+  color: #e53e3e;
+}
+
+.delete-slot-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.no-slots {
+  padding: 16px;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.add-schedule-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add-schedule-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.add-schedule-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.active-status {
+  color: #48bb78 !important;
+  font-weight: 600;
+}
+
+.amount.positive {
+  color: #48bb78;
+}
+
+.amount.negative {
+  color: #667eea;
+}
+
+/* Rest of your existing styles remain the same */
+/* ... (keep all your existing styles from your original file) ... */
+
 /* Header Styles */
 .doctors-header {
   background: white;
@@ -1156,7 +1555,7 @@ export default {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Animated Background */

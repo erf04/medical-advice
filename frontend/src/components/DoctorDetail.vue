@@ -23,11 +23,11 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
               </svg>
-              My Profile
+              Profile
             </div>
             <div class="menu-item" @click="goToConsultants">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.786 0 011.019-4.38z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
                 <path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
               </svg>
               My Consultants
@@ -229,21 +229,26 @@
               <div class="booking-steps">
                 <div class="step" :class="{ active: bookingStep >= 1, completed: bookingStep > 1 }">
                   <div class="step-number">1</div>
-                  <span class="step-label">Select Date</span>
+                  <span class="step-label">Select Patient</span>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step" :class="{ active: bookingStep >= 2, completed: bookingStep > 2 }">
                   <div class="step-number">2</div>
-                  <span class="step-label">Select Time</span>
+                  <span class="step-label">Select Date</span>
                 </div>
                 <div class="step-connector"></div>
                 <div class="step" :class="{ active: bookingStep >= 3, completed: bookingStep > 3 }">
                   <div class="step-number">3</div>
+                  <span class="step-label">Select Time</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step" :class="{ active: bookingStep >= 4, completed: bookingStep > 4 }">
+                  <div class="step-number">4</div>
                   <span class="step-label">Details</span>
                 </div>
                 <div class="step-connector"></div>
-                <div class="step" :class="{ active: bookingStep >= 4 }">
-                  <div class="step-number">4</div>
+                <div class="step" :class="{ active: bookingStep >= 5 }">
+                  <div class="step-number">5</div>
                   <span class="step-label">Confirm & Pay</span>
                 </div>
               </div>
@@ -256,8 +261,117 @@
                 Back
               </button>
 
-              <!-- Step 1: Date Selection -->
+              <!-- Step 1: Patient Selection -->
               <div v-if="bookingStep === 1" class="booking-step">
+                <h4>Who is this appointment for?</h4>
+                <p class="step-description">Select if you're booking for yourself or someone else</p>
+                
+                <div class="patient-selection">
+                  <div class="patient-option" 
+                       :class="{ selected: patientSelection === 'self' }"
+                       @click="selectPatientForSelf">
+                    <div class="patient-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <div class="patient-info">
+                      <h6>Myself</h6>
+                      <p>Book appointment for yourself</p>
+                    </div>
+                    <div class="patient-check" v-if="patientSelection === 'self'">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="patient-option" 
+                       :class="{ selected: patientSelection === 'other' }"
+                       @click="patientSelection = 'other'">
+                    <div class="patient-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <div class="patient-info">
+                      <h6>Another Person</h6>
+                      <p>Book appointment for family or friend</p>
+                    </div>
+                    <div class="patient-check" v-if="patientSelection === 'other'">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Phone number input for other patient -->
+                <div v-if="patientSelection === 'other'" class="other-patient-form">
+                  <div class="form-group">
+                    <label for="otherPatientPhone">
+                      Patient's Phone Number <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="tel" 
+                      id="otherPatientPhone" 
+                      v-model="otherPatientPhone"
+                      placeholder="Enter phone number (e.g., +123)"
+                      @input="validatePhoneNumber"
+                      :class="{ 'error': phoneError }"
+                    />
+                    <div v-if="phoneError" class="error-message">
+                      {{ phoneError }}
+                    </div>
+                    
+                    <button 
+                      v-if="otherPatientPhone && !phoneError"
+                      class="verify-patient-btn"
+                      @click="verifyOtherPatient"
+                      :disabled="verifyingPatient"
+                    >
+                      <span v-if="verifyingPatient" class="spinner"></span>
+                      <span v-else>Verify Patient</span>
+                    </button>
+                  </div>
+
+                  <!-- Patient found message -->
+                  <div v-if="otherPatientVerified" class="patient-found-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                      <strong>{{ otherPatientName }}</strong>
+                      <p>Patient verified successfully</p>
+                    </div>
+                  </div>
+
+                  <!-- Patient not found -->
+                  <div v-if="otherPatientNotFound" class="patient-not-found">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                      <strong>Patient not found</strong>
+                      <p>The phone number doesn't match any registered patient</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  class="next-step-btn" 
+                  :disabled="!canProceedToDateSelection"
+                  @click="goToDateSelection"
+                >
+                  Continue to Date Selection
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06l6.22-6.22H3a.75.75 0 010-1.5h16.19l-6.22-6.22a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Step 2: Date Selection -->
+              <div v-else-if="bookingStep === 2" class="booking-step">
                 <h4>Select Appointment Date</h4>
                 <p class="step-description">Choose a date for your consultation</p>
                 
@@ -318,8 +432,8 @@
                 </button>
               </div>
 
-              <!-- Step 2: Time Selection -->
-              <div v-else-if="bookingStep === 2" class="booking-step">
+              <!-- Step 3: Time Selection -->
+              <div v-else-if="bookingStep === 3" class="booking-step">
                 <h4>Select Appointment Time</h4>
                 <p class="step-description">Choose a time slot on {{ formatSelectedDate(selectedDate) }}</p>
                 
@@ -365,7 +479,7 @@
                 <button 
                   class="next-step-btn" 
                   :disabled="!selectedSlot"
-                  @click="bookingStep = 3"
+                  @click="bookingStep = 4"
                 >
                   Continue to Details
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -374,8 +488,8 @@
                 </button>
               </div>
 
-              <!-- Step 3: Consultation Details -->
-              <div v-else-if="bookingStep === 3" class="booking-step">
+              <!-- Step 4: Consultation Details -->
+              <div v-else-if="bookingStep === 4" class="booking-step">
                 <h4>Consultation Details</h4>
                 <p class="step-description">Tell us about the consultation</p>
                 
@@ -412,7 +526,7 @@
                 <button 
                   class="next-step-btn" 
                   :disabled="!canProceedToPayment"
-                  @click="bookingStep = 4"
+                  @click="bookingStep = 5"
                 >
                   Continue to Payment
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -421,10 +535,23 @@
                 </button>
               </div>
 
-              <!-- Step 4: Payment -->
-              <div v-else-if="bookingStep === 4" class="booking-step">
+              <!-- Step 5: Payment -->
+              <div v-else-if="bookingStep === 5" class="booking-step">
                 <h4>Confirm & Pay</h4>
                 <p class="step-description">Review your appointment details and complete payment</p>
+                
+                <!-- Patient Info Summary -->
+                <div class="patient-summary" v-if="patientSelection === 'other' && otherPatientName">
+                  <div class="summary-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                      <span class="label">Patient</span>
+                      <strong>{{ otherPatientName }}</strong>
+                    </div>
+                  </div>
+                </div>
                 
                 <!-- Appointment Summary -->
                 <div class="appointment-summary">
@@ -473,7 +600,7 @@
                       <div class="payment-info">
                         <h6>Online Wallet</h6>
                         <p>Pay using your MediCare wallet balance</p>
-                        <span class="wallet-balance">Current balance: ${{ walletBalance.toFixed(2) }}</span>
+                        <span class="wallet-balance">Current balance: ${{ walletBalance }}</span>
                       </div>
                       <div class="payment-check" v-if="paymentMethod === 'WALLET'">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -573,6 +700,10 @@
         
         <div class="appointment-details-modal">
           <div class="detail-row">
+            <span>Patient:</span>
+            <strong>{{ patientSelection === 'self' ? 'You' : otherPatientName }}</strong>
+          </div>
+          <div class="detail-row">
             <span>Date:</span>
             <strong>{{ formatSelectedDate(selectedDate) }}</strong>
           </div>
@@ -653,6 +784,18 @@ export default {
       
       // Booking data
       bookingStep: 1,
+      
+      // Patient selection
+      patientSelection: null,
+      otherPatientPhone: '',
+      otherPatientName: '',
+      otherPatientId: null,
+      otherPatientData: null,
+      verifyingPatient: false,
+      phoneError: '',
+      otherPatientVerified: false,
+      otherPatientNotFound: false,
+      
       selectedDate: null,
       selectedSlot: null,
       consultationSubject: '',
@@ -673,7 +816,10 @@ export default {
       availableTimeSlots: [],
       
       // Wallet balance
-      walletBalance: 150.50,
+      walletBalance: 0,
+      
+      // Current user
+      currentUser: null,
       
       // Medical categories
       medicalCategories: [
@@ -695,6 +841,12 @@ export default {
   },
   
   computed: {
+    canProceedToDateSelection() {
+      if (!this.patientSelection) return false;
+      if (this.patientSelection === 'self') return true;
+      return this.otherPatientVerified;
+    },
+    
     canProceedToPayment() {
       return this.consultationSubject.trim() && this.consultationDescription.trim();
     }
@@ -711,22 +863,29 @@ export default {
   
   async mounted() {
     await this.fetchDoctorData();
+    await this.fetchWalletBalance();
     this.initializeCalendar();
     
-    // Get patient ID from localStorage
-    console.log('mounted',localStorage.getItem('userData'));
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    this.patientId = userData.id;
+    // Get current user from localStorage
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      this.currentUser = JSON.parse(userData);
+    }
   },
   
   methods: {
+    getAuthToken() {
+      return localStorage.getItem('authToken') || '';
+    },
+    
     async fetchDoctorData() {
       this.loading = true;
       this.error = null;
       
       try {
         const doctorId = this.$route.params.id;
-        const authToken = localStorage.getItem('authToken');
+        const authToken = this.getAuthToken();
+        
         if (!authToken) {
           throw new Error('Authentication required. Please login first.');
         }
@@ -788,6 +947,105 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    
+    async fetchWalletBalance() {
+      try {
+        const authToken = this.getAuthToken();
+        const response = await fetch(`${this.apiBaseUrl}/wallet/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        this.walletBalance = data.balance || 0;
+        
+      } catch (err) {
+        console.error('Error fetching wallet balance:', err);
+        this.walletBalance = 0;
+      }
+    },
+    
+    async verifyOtherPatient() {
+      if (!this.otherPatientPhone || this.phoneError) return;
+      
+      this.verifyingPatient = true;
+      this.otherPatientVerified = false;
+      this.otherPatientNotFound = false;
+      
+      try {
+        const authToken = this.getAuthToken();
+        
+        const response = await fetch(`${this.apiBaseUrl}/users/find-by-phone/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            phone: this.otherPatientPhone
+          })
+        });
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            this.otherPatientNotFound = true;
+            return;
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Store patient data - IMPORTANT: Use patientProfile.id, not user.id
+        this.otherPatientData = data;
+        this.otherPatientName = `${data.firstName} ${data.lastName}`;
+        this.otherPatientId = data.patientProfile?.id || null;
+        this.otherPatientVerified = true;
+        this.otherPatientNotFound = false;
+        
+      } catch (err) {
+        console.error('Error verifying patient:', err);
+        this.phoneError = 'Error verifying patient. Please try again.';
+      } finally {
+        this.verifyingPatient = false;
+      }
+    },
+    
+    validatePhoneNumber() {
+      if (!this.otherPatientPhone) {
+        this.phoneError = '';
+        return;
+      }
+      
+      // Simple validation - adjust as needed
+      if (this.otherPatientPhone.length < 4) {
+        this.phoneError = 'Phone number must be at least 4 digits';
+      } else {
+        this.phoneError = '';
+      }
+    },
+    
+    selectPatientForSelf() {
+      this.patientSelection = 'self';
+      this.otherPatientPhone = '';
+      this.otherPatientName = '';
+      this.otherPatientId = null;
+      this.otherPatientData = null;
+      this.otherPatientVerified = false;
+      this.otherPatientNotFound = false;
+      this.phoneError = '';
+    },
+    
+    goToDateSelection() {
+      this.bookingStep = 2;
     },
     
     useMockDoctorData() {
@@ -884,12 +1142,12 @@ export default {
       this.availableTimeSlots = [];
       
       try {
-        const authToken = localStorage.getItem('authToken');
+        const authToken = this.getAuthToken();
         const doctorId = this.$route.params.id;
         
         // Convert selected date to Jalali format
         const jalaliDate = this.convertToJalali(this.selectedDate);
-        console.log(jalaliDate);
+        
         const response = await fetch(`${this.apiBaseUrl}/doctors/${doctorId}/available-slots?date=${jalaliDate}`, {
           method: 'GET',
           headers: {
@@ -949,25 +1207,33 @@ export default {
       this.selectedSlot = slot;
     },
     
-    async goToTimeSelection() {
+    goToTimeSelection() {
       if (!this.selectedDate) return;
-      this.bookingStep = 2;
+      this.bookingStep = 3;
     },
     
     async processPayment() {
       this.processingPayment = true;
       
       try {
-        const authToken = localStorage.getItem('authToken');
+        const authToken = this.getAuthToken();
         const doctorId = this.$route.params.id;
         
-        // Get patient ID from localStorage
-        console.log('process',localStorage.getItem('userData'));
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const patientId = userData.id;
+        // Determine patient ID to use
+        let patientIdToUse;
         
-        if (!patientId) {
-          throw new Error('Patient information not found. Please login again.');
+        if (this.patientSelection === 'self') {
+          // Use current user's patient profile ID
+          if (!this.currentUser?.patientProfile?.id) {
+            throw new Error('Your patient profile information not found');
+          }
+          patientIdToUse = this.currentUser.patientProfile.id;
+        } else {
+          // Use verified other patient's patientProfile.id
+          if (!this.otherPatientId) {
+            throw new Error('Selected patient information not found');
+          }
+          patientIdToUse = this.otherPatientId;
         }
         
         if (!this.selectedSlot) {
@@ -980,7 +1246,7 @@ export default {
         // Prepare booking payload
         const bookingPayload = {
           doctorId: parseInt(doctorId),
-          patientId: parseInt(patientId),
+          patientId: parseInt(patientIdToUse), // Using patientProfile.id, not user.id
           scheduleId: this.selectedSlot.scheduleId,
           subject: this.consultationSubject,
           description: this.consultationDescription,
@@ -1026,64 +1292,70 @@ export default {
     },
     
     generateCalendarDays() {
-      const days = [];
-      const startOfMonth = this.currentDate.clone().startOf('jMonth');
-      const endOfMonth = this.currentDate.clone().endOf('jMonth');
-      const startDay = startOfMonth.day(); // 0-6, 0 is Saturday in Persian calendar
-      
-      // Adjust for Persian week starting on Saturday
-      const persianStartDay = startDay === 6 ? 0 : startDay + 1;
-      
-      // Add empty days at the start
-      for (let i = 0; i < persianStartDay; i++) {
-        days.push({
-          date: null,
-          persianDay: '',
-          dateString: null,
-          available: false,
-          isToday: false
-        });
-      }
-      
-      // Add days of the month
-      for (let i = 1; i <= endOfMonth.jDate(); i++) {
-        const date = this.currentDate.clone().jDate(i).jYear(this.currentDate.jYear()).jMonth(this.currentDate.jMonth());
-        const gregorianDate = date.toDate();
-        const dateString = gregorianDate.toISOString().split('T')[0];
-        const today = moment();
-        const isToday = date.format('jYYYY/jMM/jDD') === today.format('jYYYY/jMM/jDD');
-        
-        // Check if this day is available (has schedules)
-        const dayOfWeek = date.day();
-        const persianDay = this.getPersianDayOfWeek(dayOfWeek);
-        const hasSchedules = this.doctorSchedules[persianDay.toString()] && 
-                           this.doctorSchedules[persianDay.toString()].length > 0;
-        
-        days.push({
-          date: date,
-          persianDay: i.toString(),
-          dateString: dateString,
-          available: hasSchedules,
-          isToday: isToday
-        });
-      }
-      
-      // Add empty days at the end to make 6 rows (42 days)
-      const totalDays = days.length;
-      const remainingDays = 42 - totalDays;
-      for (let i = 0; i < remainingDays; i++) {
-        days.push({
-          date: null,
-          persianDay: '',
-          dateString: null,
-          available: false,
-          isToday: false
-        });
-      }
-      
-      // Take only the first 35 days for compact view (5 weeks)
-      this.compactCalendarDays = days.slice(0, 35);
-    },
+  const days = [];
+  const startOfMonth = this.currentDate.clone().startOf('jMonth');
+  const endOfMonth = this.currentDate.clone().endOf('jMonth');
+  const startDay = startOfMonth.day(); // 0-6, 0 is Saturday in Persian calendar
+  
+  // Adjust for Persian week starting on Saturday
+  const persianStartDay = startDay === 6 ? 0 : startDay + 1;
+  
+  // Add empty days at the start
+  for (let i = 0; i < persianStartDay; i++) {
+    days.push({
+      date: null,
+      persianDay: '',
+      dateString: null,
+      available: false,
+      isToday: false
+    });
+  }
+  
+  // Add days of the month
+  for (let i = 1; i <= endOfMonth.jDate(); i++) {
+    const date = this.currentDate.clone().jDate(i).jYear(this.currentDate.jYear()).jMonth(this.currentDate.jMonth());
+    const gregorianDate = date.toDate();
+    
+    // FIX: Create date string in local timezone to avoid UTC offset issues
+    const year = gregorianDate.getFullYear();
+    const month = String(gregorianDate.getMonth() + 1).padStart(2, '0');
+    const day = String(gregorianDate.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    const today = moment();
+    const isToday = date.format('jYYYY/jMM/jDD') === today.format('jYYYY/jMM/jDD');
+    
+    // Check if this day is available (has schedules)
+    const dayOfWeek = date.day();
+    const persianDay = this.getPersianDayOfWeek(dayOfWeek);
+    const hasSchedules = this.doctorSchedules[persianDay.toString()] && 
+                       this.doctorSchedules[persianDay.toString()].length > 0;
+    
+    days.push({
+      date: date,
+      persianDay: i.toString(),
+      dateString: dateString,
+      available: hasSchedules,
+      isToday: isToday
+    });
+  }
+  
+  // Add empty days at the end to make 6 rows (42 days)
+  const totalDays = days.length;
+  const remainingDays = 42 - totalDays;
+  for (let i = 0; i < remainingDays; i++) {
+    days.push({
+      date: null,
+      persianDay: '',
+      dateString: null,
+      available: false,
+      isToday: false
+    });
+  }
+  
+  // Take only the first 35 days for compact view (5 weeks)
+  this.compactCalendarDays = days.slice(0, 35);
+},
     
     getPersianDayOfWeek(gregorianDay) {
       // Convert Gregorian day (0=Sunday) to Persian day (1=Saturday, 7=Friday)
@@ -1103,18 +1375,24 @@ export default {
     },
     
     selectDate(dateString) {
+      console.log(888888,dateString)
       this.selectedDate = dateString;
     },
     
     formatSelectedDate(dateString) {
       if (!dateString) return '';
-      const date = moment(dateString);
-      return date.format('jYYYY/jMM/jDD');
+      const [year, month, day] = dateString.split('-').map(Number);
+      // Create date at noon UTC to avoid timezone issues
+      const date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+      return moment(date).format('jYYYY/jMM/jDD');
     },
     
     convertToJalali(dateString) {
-      const date = moment(dateString);
-      return date.format('jYYYY/jMM/jDD');
+      // Parse the date string in UTC to avoid timezone shifts
+      const [year, month, day] = dateString.split('-').map(Number);
+      // Create date at noon UTC to avoid timezone issues
+      const date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+      return moment(date).format('jYYYY/jMM/jDD');
     },
     
     getCategoryName(categoryId) {
@@ -1148,7 +1426,216 @@ export default {
 </script>
 
 
+
 <style scoped>
+/* Add new styles for patient selection */
+
+.patient-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.patient-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.patient-option:hover {
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+}
+
+.patient-option.selected {
+  border-color: #667eea;
+  background: #f7f9fc;
+}
+
+.patient-icon {
+  width: 48px;
+  height: 48px;
+  background: #f7f9fc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.patient-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #667eea;
+}
+
+.patient-info {
+  flex: 1;
+}
+
+.patient-info h6 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.patient-info p {
+  font-size: 13px;
+  color: #718096;
+  margin: 0;
+}
+
+.patient-check {
+  width: 24px;
+  height: 24px;
+  background: #667eea;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.patient-check svg {
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
+.other-patient-form {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f7f9fc;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+}
+
+.verify-patient-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.verify-patient-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.verify-patient-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.patient-found-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f0fff4;
+  border: 2px solid #c6f6d5;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.patient-found-message svg {
+  width: 24px;
+  height: 24px;
+  color: #48bb78;
+  flex-shrink: 0;
+}
+
+.patient-found-message strong {
+  display: block;
+  color: #22543d;
+  margin-bottom: 4px;
+}
+
+.patient-found-message p {
+  margin: 0;
+  font-size: 13px;
+  color: #22543d;
+}
+
+.patient-not-found {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fff5f5;
+  border: 2px solid #fed7d7;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.patient-not-found svg {
+  width: 24px;
+  height: 24px;
+  color: #e53e3e;
+  flex-shrink: 0;
+}
+
+.patient-not-found strong {
+  display: block;
+  color: #c53030;
+  margin-bottom: 4px;
+}
+
+.patient-not-found p {
+  margin: 0;
+  font-size: 13px;
+  color: #c53030;
+}
+
+.patient-summary {
+  background: #f7f9fc;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 2px solid #e2e8f0;
+}
+
+.patient-summary .summary-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-summary .summary-header svg {
+  width: 24px;
+  height: 24px;
+  color: #667eea;
+}
+
+.patient-summary .summary-header .label {
+  font-size: 12px;
+  color: #718096;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* Rest of your existing styles remain exactly the same */
+/* [All your existing styles from the original file go here - I've omitted them for brevity but they should be included] */
+
 /* Base Styles */
 .doctor-detail-container {
   min-height: 100vh;

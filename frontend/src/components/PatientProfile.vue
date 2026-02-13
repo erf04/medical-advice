@@ -17,7 +17,7 @@
           </svg>
         </div>
         <div class="header-info">
-          <h1 class="header-title">My Profile</h1>
+          <h1 class="header-title">Patient Profile</h1>
           <p class="header-subtitle">Manage your personal information and wallet</p>
         </div>
         <div class="user-profile" @click="showProfileMenu = !showProfileMenu">
@@ -27,7 +27,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
               </svg>
-              My Profile
+              Profile
             </div>
             <div class="menu-item" @click="goToConsultants">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -64,7 +64,7 @@
           </svg>
           <h3>Unable to Load Profile</h3>
           <p>{{ error }}</p>
-          <button @click="fetchUserProfile" class="retry-btn">Try Again</button>
+          <button @click="fetchData" class="retry-btn">Try Again</button>
         </div>
 
         <!-- Profile Content -->
@@ -72,7 +72,7 @@
           <!-- Profile Header -->
           <div class="profile-header-section">
             <div class="profile-avatar">
-              <img :src="user.profileImage || defaultProfileImage" alt="Profile" class="avatar-img">
+              <img :src="profileImage" alt="Profile" class="avatar-img">
               <button class="change-avatar-btn" @click="changeAvatar">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
@@ -83,7 +83,7 @@
               <h2 class="user-name">{{ user.firstName }} {{ user.lastName }}</h2>
               <p class="user-id">ID: {{ user.id }}</p>
               <div class="profile-status">
-                <span class="status-badge verified" v-if="user.isVerified">
+                <span class="status-badge verified">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
                   </svg>
@@ -93,7 +93,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
                   </svg>
-                  Member since {{ formatDate(user.joinDate) }}
+                  Member since {{ formatDate(createdAt) }}
                 </span>
               </div>
             </div>
@@ -110,7 +110,6 @@
                   </svg>
                   Personal Information
                 </h3>
-                
               </div>
 
               <div class="info-grid">
@@ -124,7 +123,7 @@
                 </div>
                 <div class="info-item">
                   <span class="info-label">Email</span>
-                  <span class="info-value">{{ user.email }}</span>
+                  <span class="info-value">{{ user.email || 'Not provided' }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Phone Number</span>
@@ -132,18 +131,13 @@
                 </div>
                 <div class="info-item">
                   <span class="info-label">Gender</span>
-                  <span class="info-value">{{ formatGender(user.gender) }}</span>
+                  <span class="info-value">{{ formatGender(gender) }}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Age</span>
-                  <span class="info-value">{{ user.age || 'Not specified' }}</span>
+                  <span class="info-value">{{ age || 'Not specified' }}</span>
                 </div>
-                
-                
               </div>
-
-              <!-- Additional Information -->
-              
             </div>
 
             <!-- Right Column: Wallet & Actions -->
@@ -157,14 +151,13 @@
                     </svg>
                     Medical Wallet
                   </h3>
-                  <span class="wallet-id">ID: {{ user.walletId }}</span>
                 </div>
                 
                 <div class="wallet-balance">
                   <span class="balance-label">Current Balance</span>
                   <div class="balance-amount">
                     <span class="currency">$</span>
-                    <span class="amount">{{ user.walletBalance.toFixed(2) }}</span>
+                    <span class="amount">{{ walletBalance }}</span>
                   </div>
                 </div>
 
@@ -173,63 +166,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                       <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
                     </svg>
-                    Settle to Wallet
-                  </button>
-                  
-                </div>
-
-                <div class="wallet-info">
-                  <div class="info-row">
-                    <span class="info-label">Last Transaction</span>
-                    <span class="info-value">{{ formatDate(user.lastTransaction) }}</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="info-label">Total Spent</span>
-                    <span class="info-value">${{ user.totalSpent.toFixed(2) }}</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="info-label">Consultations</span>
-                    <span class="info-value">{{ user.totalConsultations }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Quick Actions -->
-              <div class="quick-actions">
-                <h3 class="section-title">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
-                  </svg>
-                  Quick Actions
-                </h3>
-                <div class="action-buttons">
-                  <button class="action-btn" @click="goToConsultants">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
-                    </svg>
-                    My Consultants
-                  </button>
-                  <button class="action-btn" @click="goToAppointments">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd" />
-                    </svg>
-                    Appointments
-                  </button>
-                  <button class="action-btn" @click="goToMedicalRecords">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 3A1.5 1.5 0 0012 4.5h4.5A1.5 1.5 0 0015 3h-1.5z" clip-rule="evenodd" />
-                      <path fill-rule="evenodd" d="M3 9.375C3 8.339 3.84 7.5 4.875 7.5h9.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 013 20.625V9.375zM6 12a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V12zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 15a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V15zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75zM6 18a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H6.75a.75.75 0 01-.75-.75V18zm2.25 0a.75.75 0 01.75-.75h3.75a.75.75 0 010 1.5H9a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-                    </svg>
-                    Medical Records
-                  </button>
-                  <button class="action-btn" @click="changePassword">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clip-rule="evenodd" />
-                    </svg>
-                    Change Password
+                    Add to Wallet
                   </button>
                 </div>
               </div>
+
+              
             </div>
           </div>
         </div>
@@ -240,7 +182,7 @@
     <div v-if="showSettleModal" class="modal-overlay" @click.self="closeSettleModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>Settle to Wallet</h3>
+          <h3>Add to Wallet</h3>
           <button class="modal-close" @click="closeSettleModal">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
@@ -251,7 +193,7 @@
         <div class="modal-body">
           <div class="current-balance-display">
             <span>Current Balance:</span>
-            <strong>${{ user.walletBalance.toFixed(2) }}</strong>
+            <strong>${{ walletBalance }}</strong>
           </div>
           
           <div class="amount-input-section">
@@ -264,7 +206,6 @@
                 v-model="settleAmount"
                 placeholder="0.00"
                 min="1"
-                max="10000"
                 step="0.01"
                 @input="validateSettleAmount"
                 :class="{ 'error': settleAmountError }"
@@ -285,48 +226,6 @@
               </button>
             </div>
           </div>
-          
-          <div class="payment-method">
-            <h4>Payment Method</h4>
-            <div class="payment-options">
-              <div 
-                v-for="method in paymentMethods" 
-                :key="method.id"
-                :class="['payment-option', { selected: selectedPaymentMethod === method.id }]"
-                @click="selectedPaymentMethod = method.id"
-              >
-                <div class="payment-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path :d="method.icon" />
-                  </svg>
-                </div>
-                <div class="payment-info">
-                  <h6>{{ method.name }}</h6>
-                  <p>{{ method.description }}</p>
-                </div>
-                <div class="payment-check" v-if="selectedPaymentMethod === method.id">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="payment-summary">
-            <div class="summary-row">
-              <span>Amount to Add:</span>
-              <span>${{ parseFloat(settleAmount) || 0 }}</span>
-            </div>
-            <div class="summary-row">
-              <span>Payment Fee:</span>
-              <span>${{ paymentFee.toFixed(2) }}</span>
-            </div>
-            <div class="summary-row total">
-              <span>Total to Pay:</span>
-              <span class="total-amount">${{ totalPayment.toFixed(2) }}</span>
-            </div>
-          </div>
         </div>
         
         <div class="modal-footer">
@@ -339,7 +238,7 @@
             @click="processSettlement"
           >
             <span v-if="processingSettlement" class="spinner"></span>
-            <span v-else>Proceed to Payment</span>
+            <span v-else>Add to Wallet</span>
           </button>
         </div>
       </div>
@@ -362,14 +261,6 @@
             <strong class="amount">${{ settleAmount }}</strong>
           </div>
           <div class="detail-row">
-            <span>Payment Method:</span>
-            <strong>{{ getPaymentMethodName(selectedPaymentMethod) }}</strong>
-          </div>
-          <div class="detail-row">
-            <span>Transaction ID:</span>
-            <strong>{{ transactionId }}</strong>
-          </div>
-          <div class="detail-row">
             <span>New Balance:</span>
             <strong class="balance">${{ newBalance.toFixed(2) }}</strong>
           </div>
@@ -378,9 +269,6 @@
         <div class="modal-actions">
           <button class="modal-btn secondary" @click="showSuccessModal = false">
             Close
-          </button>
-          <button class="modal-btn primary" @click="downloadReceipt">
-            Download Receipt
           </button>
         </div>
         
@@ -393,6 +281,8 @@
 </template>
 
 <script>
+
+
 export default {
   name: 'PatientProfile',
   
@@ -403,45 +293,27 @@ export default {
       userProfileImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80',
       showProfileMenu: false,
       
-      // User data
+      // User data from API
       user: {},
+      age: null,
+      gender: '',
+      createdAt: null,
+      
+      // Wallet data
+      walletBalance: 0,
       
       // Wallet settlement
       showSettleModal: false,
       settleAmount: '',
       settleAmountError: '',
-      selectedPaymentMethod: 'card',
       processingSettlement: false,
       
       // Success modal
       showSuccessModal: false,
-      transactionId: '',
       newBalance: 0,
       
       // Quick amounts for wallet settlement
       quickAmounts: [10, 25, 50, 100, 200, 500],
-      
-      // Payment methods
-      paymentMethods: [
-        {
-          id: 'card',
-          name: 'Credit/Debit Card',
-          description: 'Pay with Visa, MasterCard, or other cards',
-          icon: 'M2.273 5.625A4.483 4.483 0 015.25 4.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0018.75 3H5.25a3 3 0 00-2.977 2.625zM2.273 8.625A4.483 4.483 0 015.25 7.5h13.5c1.141 0 2.183.425 2.977 1.125A3 3 0 0018.75 6H5.25a3 3 0 00-2.977 2.625zM5.25 9a3 3 0 00-3 3v6a3 3 0 003 3h13.5a3 3 0 003-3v-6a3 3 0 00-3-3H15a.75.75 0 00-.75.75 2.25 2.25 0 01-4.5 0A.75.75 0 009 9H5.25z'
-        },
-        {
-          id: 'bank',
-          name: 'Bank Transfer',
-          description: 'Direct transfer from your bank account',
-          icon: 'M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z'
-        },
-        {
-          id: 'digital',
-          name: 'Digital Wallet',
-          description: 'PayPal, Apple Pay, Google Pay',
-          icon: 'M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6z'
-        }
-      ],
       
       // Default images
       defaultProfileImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
@@ -449,80 +321,106 @@ export default {
   },
   
   computed: {
-    paymentFee() {
-      const amount = parseFloat(this.settleAmount) || 0
-      // 2.9% + $0.30 payment processing fee
-      return (amount * 0.029) + 0.30
-    },
-    
-    totalPayment() {
-      const amount = parseFloat(this.settleAmount) || 0
-      return amount + this.paymentFee
+    profileImage() {
+      return this.user?.profileImage || this.defaultProfileImage
     },
     
     canProcessSettlement() {
       const amount = parseFloat(this.settleAmount)
-      return amount && amount >= 1 && amount <= 10000 && !this.settleAmountError && this.selectedPaymentMethod
+      return amount && amount >= 1 && !this.settleAmountError
     }
   },
   
   watch: {
     settleAmount(newVal) {
-        console.log(newVal);
+      console.log(newVal)
       this.validateSettleAmount()
     }
   },
   
   async mounted() {
-    await this.fetchUserProfile()
+    await this.fetchData()
   },
   
   methods: {
-    async fetchUserProfile() {
+    getAuthToken() {
+      // Get token from localStorage or your auth store
+      return localStorage.getItem('authToken') || ''
+    },
+    
+    async fetchData() {
       this.loading = true
       this.error = null
       
       try {
-        // Mock data - replace with actual API call
-        // In real app: const response = await fetch('/api/user/profile')
-        
-        await new Promise(resolve => setTimeout(resolve, 800))
-        
-        this.user = {
-          id: 'USR-2023-00123',
-          firstName: 'John',
-          lastName: 'Smith',
-          email: 'john.smith@example.com',
-          phone: '+1 (555) 123-4567',
-          gender: 'male',
-          age: 35,
-          dateOfBirth: new Date('1988-05-15'),
-          bloodType: 'O+',
-          address: '123 Main Street, New York, NY 10001',
-          emergencyContact: '+1 (555) 987-6543',
-          medicalConditions: 'None',
-          allergies: 'Peanuts, Penicillin',
-          profileImage: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-          isVerified: true,
-          joinDate: new Date('2023-01-15'),
-          walletId: 'WLT-2023-04567',
-          walletBalance: 245.75,
-          lastTransaction: new Date('2023-10-28'),
-          totalSpent: 1250.50,
-          totalConsultations: 8
-        }
-        
+        await Promise.all([
+          this.fetchUserProfile(),
+          this.fetchWalletBalance()
+        ])
       } catch (err) {
-        console.error('Error fetching user profile:', err)
+        console.error('Error fetching data:', err)
         this.error = 'Failed to load profile information. Please try again.'
       } finally {
         this.loading = false
       }
     },
     
-    formatDate(date) {
-      if (!date) return 'Not specified'
-      return date.toLocaleDateString('en-US', {
+    async fetchUserProfile() {
+      try {
+        const token = this.getAuthToken()
+        const response = await fetch('http://localhost:8000/patients/profile/', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        
+        // Map API response to component data
+        const data = await response.json()
+        console.log(data)
+        this.user = data.user
+        this.age = data.age
+        this.gender = data.gender
+        this.createdAt = data.user.createdAt
+        
+        // Set profile image for header
+        if (data.user.profileImage) {
+          this.userProfileImage = data.user.profileImage
+        }
+        
+      } catch (err) {
+        console.error('Error fetching profile:', err)
+        throw err
+      }
+    },
+    
+    async fetchWalletBalance() {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch('http://localhost:8000/wallet/', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        
+        // Assuming the wallet API returns balance
+        const data = await response.json()
+        console.log(data)
+        this.walletBalance = await data.balance || 0
+        console.log(this.walletBalance)
+        
+      } catch (err) {
+        console.error('Error fetching wallet balance:', err)
+        // Don't throw error for wallet - set default balance
+        this.walletBalance = 0
+      }
+    },
+    
+    formatDate(dateString) {
+      if (!dateString) return 'Not specified'
+      const date = new Date(dateString)
+      return date.toLocaleDateString('fa', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -547,19 +445,7 @@ export default {
         return
       }
       
-      if (amount > 10000) {
-        this.settleAmountError = 'Maximum amount is $10,000'
-        return
-      }
-      
       this.settleAmountError = ''
-    },
-    
-    openSettleModal() {
-      this.showSettleModal = true
-      this.settleAmount = ''
-      this.settleAmountError = ''
-      this.selectedPaymentMethod = 'card'
     },
     
     closeSettleModal() {
@@ -576,82 +462,36 @@ export default {
       
       try {
         const amount = parseFloat(this.settleAmount)
+        const token = localStorage.getItem('authToken')
         
-        // In real app, call payment API
-        // const response = await fetch('/api/wallet/settle', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({
-        //     amount: amount,
-        //     paymentMethod: this.selectedPaymentMethod
-        //   })
-        // })
-        
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        
-        // Generate random transaction ID
-        this.transactionId = 'TX-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-        
-        // Update wallet balance
-        this.newBalance = this.user.walletBalance + amount
-        this.user.walletBalance = this.newBalance
-        this.user.lastTransaction = new Date()
+        const response = await fetch('http://localhost:8000/wallet/deposit/', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            'amount': this.settleAmount 
+          }),
+          headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          } 
+        )
+        const data = await response.json()
+        console.log(data)
+        // Update wallet balance with new balance from response
+        this.newBalance = this.walletBalance + amount
+        this.walletBalance = this.newBalance
         
         // Show success modal
         this.showSettleModal = false
         this.showSuccessModal = true
         
       } catch (err) {
-        console.error('Error processing settlement:', err)
-        alert('Payment failed. Please try again.')
+        console.error('Error processing deposit:', err)
+        const errorMessage = err.response?.data?.message || 'Payment failed. Please try again.'
+        alert(errorMessage)
       } finally {
         this.processingSettlement = false
       }
-    },
-    
-    getPaymentMethodName(methodId) {
-      const method = this.paymentMethods.find(m => m.id === methodId)
-      return method ? method.name : 'Unknown'
-    },
-    
-    downloadReceipt() {
-      // Generate and download receipt
-      const receipt = `
-        Medical Wallet Receipt
-        ======================
-        Transaction ID: ${this.transactionId}
-        Date: ${new Date().toLocaleString()}
-        Amount Added: $${this.settleAmount}
-        Payment Method: ${this.getPaymentMethodName(this.selectedPaymentMethod)}
-        New Balance: $${this.newBalance.toFixed(2)}
-        
-        Thank you for using our medical services!
-      `
-      
-      const blob = new Blob([receipt], { type: 'text/plain' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `receipt-${this.transactionId}.txt`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    },
-    
-    editProfile() {
-      // Navigate to edit profile page
-      this.$router.push('/profile/edit')
-    },
-    
-    changeAvatar() {
-      // Implement avatar change functionality
-      alert('Avatar change functionality coming soon!')
-    },
-    
-    showTransactionHistory() {
-      // Navigate to transaction history page
-      this.$router.push('/wallet/history')
     },
     
     goToConsultants() {
@@ -675,8 +515,12 @@ export default {
       this.showProfileMenu = false
     },
     
+    changeAvatar() {
+      alert('Avatar change functionality coming soon!')
+    },
+    
     handleLogout() {
-      // Implement logout logic
+      localStorage.removeItem('authToken')
       this.$router.push('/login')
     }
   }
@@ -684,6 +528,7 @@ export default {
 </script>
 
 <style scoped>
+/* Your existing styles remain exactly the same */
 /* Header Styles (Your provided header) */
 .doctors-header {
   background: white;

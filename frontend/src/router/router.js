@@ -5,12 +5,21 @@ import DoctorDetail from '@/components/DoctorDetail.vue'
 import PatientConsultants from '@/components/PatientConsultants.vue'
 import PatientProfile from '@/components/PatientProfile.vue'
 import DoctorPannel from '@/components/DoctorPannel.vue'
+import AdminLogin from '@/components/AdminLogin.vue'
+import AdminDashboard from '@/components/AdminDashboard.vue'
+import PatientChat from '@/components/PatientChat.vue'
+import DoctorReviews from '@/components/DoctorReviews.vue'
 
 const routes = [
   {
     path: '/',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/admin',
+    name: 'adminlogin',
+    component: AdminLogin
   },
   {
     path: '/doctors',
@@ -28,6 +37,11 @@ const routes = [
     component: PatientConsultants
   },
   {
+    path: '/chat/:id',
+    name: 'patientchat',
+    component: PatientChat
+  },
+  {
     path: '/profile',
     name: 'patientprofile',
     component: PatientProfile
@@ -36,6 +50,16 @@ const routes = [
     path: '/mypannel',
     name: 'doctorpannel',
     component: DoctorPannel
+  },
+  {
+    path: '/myreviews',
+    name: 'doctorreviews',
+    component: DoctorReviews
+  },
+  {
+    path: '/dashboard',
+    name: 'admindashboard',
+    component: AdminDashboard
   },
   
 ]
