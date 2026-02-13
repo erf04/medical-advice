@@ -17,21 +17,9 @@ export class DoctorDashboardService {
   ) {}
 
   async getUpcomingForDoctor(userId: number) {
-    const doctor = await this.doctorRepo.findOne({
-      where: { user: { id: userId } },
-    });
-
-    if (!doctor) {
-      throw new Error('Doctor profile not found');
-    }
-
     return this.consultationRepo.find({
-      where: {
-        doctor: { id: doctor.id },
-        status: ConsultationStatus.PAID,
-      },
-      relations: ['patient','patient.user'],
-      order: { startedAt: 'ASC' },
+      where: { doctor: { user: { id: userId } } },
+      relations: ['doctor', 'doctor.user', 'patient', 'patient.user'],
     });
   }
 

@@ -124,12 +124,13 @@ export class WalletService {
 
       const doctorShare =
         Math.floor(
-          consultation.price *
-            (100 - consultation.commissionPercent) /
+          Number(consultation.price) *
+            (100 - Number(consultation.commissionPercent)) /
             100,
         );
-
-      wallet.balance += doctorShare;
+      const balanceBefore = Number(wallet.balance);
+      const newBalance = balanceBefore + doctorShare;
+      wallet.balance = newBalance;
       await manager.save(wallet);
 
       await manager.save(
@@ -141,6 +142,7 @@ export class WalletService {
           referenceId: consultation.id,
         }),
       );
+      return wallet;
     });
   }
 

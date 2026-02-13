@@ -15,19 +15,22 @@ import { ChatGateway } from './chat/chat.gateway';
 import { TempFile } from './chat/temp-file.entity';
 import { ConsultationChatController } from './chat/consultation-chat.controller';
 import { ConsultationChatService } from './chat/consultation-chat.service';
+import { SettleRequest } from './settle/settle-req.entity';
+import { SettleController } from './settle/settle.controller';
+import { SettleService } from './settle/settle.service';
 
 @Module({
   imports:[
     TypeOrmModule.forFeature([Consultation,DoctorProfile,
-      PatientProfile,DoctorSchedule,ConsultationMessage,TempFile]),
+      PatientProfile,DoctorSchedule,ConsultationMessage,TempFile,SettleRequest]),
     AuthModule,
     DoctorsModule,
     PatientsModule,
     WalletModule,
 
   ],
-  controllers: [ConsultationsController,ConsultationChatController],
-  providers: [ConsultationService,ChatGateway,ConsultationChatService],
+  controllers: [ConsultationsController,ConsultationChatController,SettleController],
+  providers: [ConsultationService,ChatGateway,ConsultationChatService,SettleService],
   exports:[ChatGateway,ConsultationService]
 })
 export class ConsultationsModule {}
