@@ -11,7 +11,7 @@ import { User, UserRole } from '../users/users.entity';
 import { CreateDoctorProfileDto } from './dto/create-doctor-profile.dto';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { Category } from '../categories/category.entity';
-
+import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 
 @Injectable()
 export class DoctorsService {
@@ -20,7 +20,7 @@ export class DoctorsService {
     private doctorRepo: Repository<DoctorProfile>,
 
     @InjectRepository(Category)
-    private categoryRepo:Repository<Category>
+    private categoryRepo: Repository<Category>,
   ) {}
 
   async createProfile(user: User, dto: CreateDoctorProfileDto) {
@@ -36,18 +36,18 @@ export class DoctorsService {
       throw new BadRequestException('Doctor profile already exists');
     }
     const category = await this.categoryRepo.findOne({
-      where : {
-        id : dto.category
-      }
-    })
-    if (!category){
-      throw new BadRequestException('category not found!')
+      where: {
+        id: dto.category,
+      },
+    });
+    if (!category) {
+      throw new BadRequestException('category not found!');
     }
 
     const profile = this.doctorRepo.create({
-      medicalCode:dto.medicalCode,
-      contactInfo : dto.contactInfo,
-      category : category,
+      medicalCode: dto.medicalCode,
+      contactInfo: dto.contactInfo,
+      category: category,
       user,
       maxConcurrentConsultations: dto.maxConcurrentConsultations ?? 1,
     });
@@ -55,10 +55,51 @@ export class DoctorsService {
     return this.doctorRepo.save(profile);
   }
 
-  async getMyProfile(user: User) {
-    const profile =  this.doctorRepo.findOne({
+  async editProfile(user: User, dto: UpdateDoctorProfileDto) {
+    if (user.role !== UserRole.DOCTOR) {
+      throw new ForbiddenException('Only doctors can edit their profile');
+    }
+
+    const profile = await this.doctorRepo.findOne({
       where: { user: { id: user.id } },
-      relations: ['category','user'],
+      relations: ['category'],
+    });
+
+    if (!profile) {
+      throw new BadRequestException('Doctor profile not found');
+    }
+
+    if (dto.category) {
+      const category = await this.categoryRepo.findOne({
+        where: { id: dto.category },
+      });
+
+      if (!category) {
+        throw new BadRequestException('Category not found!');
+      }
+
+      profile.category = category;
+    }
+
+    if (dto.medicalCode !== undefined) {
+      profile.medicalCode = dto.medicalCode;
+    }
+
+    if (dto.contactInfo !== undefined) {
+      profile.contactInfo = dto.contactInfo;
+    }
+
+    if (dto.maxConcurrentConsultations !== undefined) {
+      profile.maxConcurrentConsultations = dto.maxConcurrentConsultations;
+    }
+
+    return this.doctorRepo.save(profile);
+  }
+
+  async getMyProfile(user: User) {
+    const profile = this.doctorRepo.findOne({
+      where: { user: { id: user.id } },
+      relations: ['category', 'user'],
     });
     return instanceToPlain(profile);
   }
@@ -112,11 +153,10 @@ export class DoctorsService {
     });
   }
 
-
   async getAllDoctors() {
     const doctors = await this.doctorRepo.find({
       where: { isActive: true },
-      relations: ['category','user'],
+      relations: ['category', 'user'],
     });
     return doctors.map((d) => instanceToPlain(d));
   }
