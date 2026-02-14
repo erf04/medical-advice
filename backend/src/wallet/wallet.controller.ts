@@ -44,12 +44,13 @@ export class WalletController {
   }
 
   @Get(':id/')
-  async getWalletByUserId(@Body('userId') userId:number) {
+  async getWalletByUserId(@Body('id') userId:number) {
     return this.walletService.getWalletByUserId(userId);
   }
 
-  @Get('transactions/:id')
-  async getWalletTransactionsByUserId(@Param('userId') userId:number) {
+  @Get('transactions/:id/')
+  async getWalletTransactionsByUserId(@Param('id') userId:number) {
+    log('Fetching transactions for userId:', userId);
     return this.walletService.getTransactionsByWallet(userId);
   }
 }
