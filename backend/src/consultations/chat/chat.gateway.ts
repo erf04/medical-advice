@@ -70,7 +70,9 @@ export class ChatGateway {
 
     // log('Consultation found:', consultation);
 
-    if (!consultation || consultation.status !== 'ACTIVE') {
+    if (!consultation 
+      // || consultation.status !== 'ACTIVE'
+    ) {
       log('in handleConnection: Consultation not found or not active for id', consultationId);
       socket.disconnect();
       return;
