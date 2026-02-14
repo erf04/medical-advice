@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
-import { User } from '../users.entity';
+import { User, UserRole } from '../users.entity';
 import { AdminCreateUserDto } from './dto/create-user.dto';
 import { AdminUpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -96,4 +96,12 @@ export class AdminUsersService {
 
     return { message: 'User deleted successfully' };
   }
+
+  /* ---------- Find all admins ---------- */
+  async findAllAdmins() {
+    return this.userRepo.find({
+      where: { role: UserRole.ADMIN },
+      order: { createdAt: 'DESC' },
+    });
+  } 
 }

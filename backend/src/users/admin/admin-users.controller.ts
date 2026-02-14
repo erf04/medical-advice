@@ -57,4 +57,9 @@ export class AdminUsersController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.adminService.remove(id);
   }
+
+  @Get('admins/all/')
+  findAllAdmins() {
+    return this.adminService.findAllAdmins();
+  }
 }
