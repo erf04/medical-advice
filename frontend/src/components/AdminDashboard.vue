@@ -64,6 +64,7 @@
           @show-add-doctor="handleShowAddDoctor"
           @show-doctors-list="handleShowDoctorsList"
           @view-doctor-detail="handleViewDoctorDetail"
+          @show-requests="handleRequests"
         />
       </div>
     </div>
@@ -75,6 +76,7 @@ import AdminDoctors from './AdminDoctors.vue'
 import AdminAddDoctor from './AdminAddingDoctor.vue' // Import the new component
 import AdminDoctorDetail from './AdminDoctorDetail.vue'
 import AdminPatients from './AdminPatients.vue'
+import Requests from './SettleupRequests.vue'
 // import AdminAdmins from './AdminAdmins.vue'
 
 export default {
@@ -85,6 +87,7 @@ export default {
     AdminAddDoctor, // Add it to components
     AdminDoctorDetail,
     AdminPatients,
+    Requests
     // AdminAdmins
   },
   
@@ -140,6 +143,8 @@ export default {
           return AdminDoctorDetail
         case 'patients':
           return AdminPatients
+        case 'requests':
+          return Requests
         // case 'admins':
         //   return AdminAdmins
         default:
@@ -153,6 +158,9 @@ export default {
   },
   
   methods: {
+    handleRequests() {
+      this.currentView = 'requests'
+    },
     navigateTo(view) {
       this.currentView = view
     },

@@ -262,7 +262,7 @@
           </div>
           <div class="detail-row">
             <span>New Balance:</span>
-            <strong class="balance">${{ newBalance.toFixed(2) }}</strong>
+            <strong class="balance">${{ newBalance }}</strong>
           </div>
         </div>
         

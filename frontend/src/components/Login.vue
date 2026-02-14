@@ -1216,8 +1216,8 @@ export default {
             throw new Error(`Patient profile creation failed: ${errorData.message || 'Unknown error'}`)
           }
           const data = await patientProfileResponse.json()
-          localStorage.setItem('userId',data.id)
-          console.log('Patient profile completed successfully')
+          
+          console.log('Patient profile completed successfully',data)
         }
         
         // Store auth data in localStorage
