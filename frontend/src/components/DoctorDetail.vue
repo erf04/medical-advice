@@ -104,10 +104,7 @@
 
             <!-- Quick Stats -->
             <div class="quick-stats">
-              <div class="stat">
-                <span class="stat-number">{{ doctor.experience }}+</span>
-                <span class="stat-label">Years Experience</span>
-              </div>
+              
               <div class="stat">
                 <span class="stat-number">{{ doctor.patientsCount?.toLocaleString() || '5,000+' }}</span>
                 <span class="stat-label">Patients</span>
@@ -918,8 +915,8 @@ export default {
           specialty: this.getSpecialtyFromCategories(data.categories),
           consultationFee: data.consultationPrice || 0,
           consultationTime: 30, // Default
-          rating: this.getRandomRating(),
-          reviewCount: this.getRandomReviewCount(),
+          rating: data.averageRating,
+          reviewCount: data.totalReviews,
           experience: this.getRandomExperience(),
           isOnline: Math.random() > 0.5,
           isVerified: !!data.medicalCode,
