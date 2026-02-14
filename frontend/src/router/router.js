@@ -9,6 +9,7 @@ import AdminLogin from '@/components/AdminLogin.vue'
 import AdminDashboard from '@/components/AdminDashboard.vue'
 import PatientChat from '@/components/PatientChat.vue'
 import DoctorReviews from '@/components/DoctorReviews.vue'
+import DoctorConsultants from '@/components/DoctorConsultants.vue'
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
     path: '/consultants',
     name: 'patientconsultants',
     component: PatientConsultants
+  },
+  {
+    path: '/myconsultants',
+    name: 'doctorconsultants',
+    component: DoctorConsultants
   },
   {
     path: '/chat/:id',

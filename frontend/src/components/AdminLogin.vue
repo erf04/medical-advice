@@ -184,12 +184,12 @@ export default {
       const identifier = this.loginData.identifier.trim()
       
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      const phoneRegex = /^[+]?[0-9\s\-()]{10,}$/
+      const phoneRegex = /^[+]?[0-9\s\-()]{3,}$/
       
       if (emailRegex.test(identifier)) {
         this.identifierType = 'email'
         this.identifierError = ''
-      } else if (phoneRegex.test(identifier)) {
+      } else if (phoneRegex.test(identifier.replace(/[\s\-()]/g, ''))) {
         this.identifierType = 'phone'
         this.identifierError = ''
       } else if (identifier) {
@@ -211,42 +211,55 @@ export default {
       this.message.text = ''
       
       try {
-        // In a real app, you would have a separate admin login endpoint
-        // For now, using the same login endpoint but checking for admin role
+        // Prepare login payload
+        const loginPayload = {
+          phone_number: this.loginData.identifier,
+          password: this.loginData.password
+        }
+        
+        // If identifier is email, you might need to adjust based on your API
+        // Some APIs accept both, but yours seems to expect phone_number
+        // If your API accepts email in phone_number field, it's fine
+        
         const response = await fetch(`${this.apiBaseUrl}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            phone_number: this.loginData.identifier,
-            password: this.loginData.password,
-          })
+          body: JSON.stringify(loginPayload)
         })
         
         const data = await response.json()
         
         if (response.ok) {
-          // Check if user is admin (you need to adjust this based on your API)
-          if (data.user.role === 'admin') {
+          // Check if user is admin
+          // Based on your response structure, role is in user.role
+          if (data.user && data.user.role === 'admin') {
             this.showMessage('Login successful! Redirecting to admin panel...', 'success')
             
+            // Store authentication data
             localStorage.setItem('authToken', data.accessToken)
             localStorage.setItem('userData', JSON.stringify(data.user))
             localStorage.setItem('isAdmin', 'true')
             
+            // If remember me is checked, you might want to extend session duration
+            // This would typically be handled by the backend with token expiration
+            
             setTimeout(() => {
-              this.$router.push('/admin/dashboard')
+              this.$router.push('/dashboard')
             }, 1500)
           } else {
+            // User exists but is not an admin
             this.showMessage('Access denied. This portal is for administrators only.', 'error')
           }
         } else {
-          this.showMessage(data.message || 'Invalid credentials. Please try again.', 'error')
+          // Handle error responses
+          const errorMessage = data.message || data.error || 'Invalid credentials. Please try again.'
+          this.showMessage(errorMessage, 'error')
         }
       } catch (error) {
         console.error('Login error:', error)
-        this.showMessage('Network error. Please check your connection.', 'error')
+        this.showMessage('Network error. Please check your connection and try again.', 'error')
       } finally {
         this.isLoading = false
       }
@@ -256,6 +269,7 @@ export default {
       this.message.text = text
       this.message.type = type
       
+      // Clear message after 5 seconds
       setTimeout(() => {
         this.message.text = ''
       }, 5000)
@@ -263,7 +277,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 .admin-login-container {
   min-height: 100vh;

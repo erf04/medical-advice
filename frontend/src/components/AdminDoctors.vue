@@ -59,7 +59,7 @@
             <select v-model="selectedCategory" @change="applyFilters" class="filter-select">
               <option value="">All Categories</option>
               <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
+                {{ category.title }}
               </option>
             </select>
           </div>
@@ -128,14 +128,14 @@
         <div v-else class="categories-grid">
           <div v-for="category in categories" :key="category.id" class="category-card">
             <div class="category-header">
-              <div class="category-icon" :style="{ background: category.color || '#4299e1' }">
+              <div class="category-icon" :style="{ background: getCategoryColor(category.id) }">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path fill-rule="evenodd" d="M3.792 2.938A49.069 49.069 0 0112 2.25c2.797 0 5.54.236 8.209.688a1.857 1.857 0 011.541 1.836v1.044a3 3 0 01-.879 2.121l-6.182 6.182a1.5 1.5 0 00-.439 1.061v2.927a3 3 0 01-1.658 2.684l-1.757.878A.75.75 0 019.75 21v-5.818a1.5 1.5 0 00-.44-1.06L3.13 7.938a3 3 0 01-.879-2.121V4.774c0-.897.64-1.683 1.542-1.836z" clip-rule="evenodd" />
                 </svg>
               </div>
               <div class="category-info">
-                <h3>{{ category.name }}</h3>
-                <span class="doctor-count">{{ category.doctorCount || 0 }} doctors</span>
+                <h3>{{ category.title }}</h3>
+                <span class="doctor-count">{{ category.doctors?.length || 0 }} doctors</span>
               </div>
               <div class="category-actions">
                 <button class="category-btn edit" @click="editCategory(category)" title="Edit Category">
@@ -149,6 +149,9 @@
                   </svg>
                 </button>
               </div>
+            </div>
+            <div v-if="category.description" class="category-description">
+              {{ category.description }}
             </div>
           </div>
         </div>
@@ -318,11 +321,11 @@
         <div class="modal-body">
           <form @submit.prevent="saveCategory">
             <div class="form-group">
-              <label for="categoryName">Category Name <span class="required">*</span></label>
+              <label for="categoryName">Category Title <span class="required">*</span></label>
               <input 
                 type="text" 
                 id="categoryName" 
-                v-model="categoryForm.name"
+                v-model="categoryForm.title"
                 placeholder="e.g., Cardiology"
                 required
               />
@@ -456,7 +459,7 @@
                   :class="['category-chip', { selected: doctorForm.categories.includes(category.id) }]"
                   @click="toggleCategory(category.id)"
                 >
-                  {{ category.name }}
+                  {{ category.title }}
                 </div>
               </div>
             </div>
@@ -502,7 +505,7 @@
               Dr. {{ itemToDelete?.firstName }} {{ itemToDelete?.lastName }}
             </strong>
             <strong v-else-if="deleteType === 'category'">
-              {{ itemToDelete?.name }}
+              {{ itemToDelete?.title }}
             </strong>?
           </p>
           <p class="delete-warning">This action cannot be undone.</p>
@@ -567,7 +570,7 @@ export default {
       
       // Form data
       categoryForm: {
-        name: '',
+        title: '',
         color: '#4299e1',
         description: ''
       },
@@ -808,20 +811,26 @@ export default {
       this.categoriesError = null
       
       try {
-        // const authToken = localStorage.getItem('authToken')
+        const authToken = localStorage.getItem('authToken')
         
-        await new Promise(resolve => setTimeout(resolve, 300))
+        if (!authToken) {
+          throw new Error('Authentication required')
+        }
         
-        this.categories = [
-          { id: 'cardiology', name: 'Cardiology', color: '#4299e1', doctorCount: 12, description: 'Heart and cardiovascular system' },
-          { id: 'dermatology', name: 'Dermatology', color: '#48bb78', doctorCount: 8, description: 'Skin, hair, and nails' },
-          { id: 'pediatrics', name: 'Pediatrics', color: '#ed8936', doctorCount: 15, description: 'Child healthcare' },
-          { id: 'neurology', name: 'Neurology', color: '#9f7aea', doctorCount: 6, description: 'Nervous system disorders' },
-          { id: 'orthopedics', name: 'Orthopedics', color: '#f56565', doctorCount: 9, description: 'Musculoskeletal system' },
-          { id: 'psychiatry', name: 'Psychiatry', color: '#38b2ac', doctorCount: 7, description: 'Mental health' },
-          { id: 'dentistry', name: 'Dentistry', color: '#ed64a6', doctorCount: 11, description: 'Oral health' },
-          { id: 'ophthalmology', name: 'Ophthalmology', color: '#667eea', doctorCount: 5, description: 'Eye care' }
-        ]
+        const response = await fetch(`${this.apiBaseUrl}/categories/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories')
+        }
+        
+        const data = await response.json()
+        this.categories = data || []
         
       } catch (err) {
         console.error('Error fetching categories:', err)
@@ -842,27 +851,41 @@ export default {
           throw new Error('Authentication required')
         }
         
-        await new Promise(resolve => setTimeout(resolve, 800))
+        const url = this.editingCategory 
+          ? `${this.apiBaseUrl}/categories/${this.editingCategory.id}/`
+          : `${this.apiBaseUrl}/categories/`
+        
+        const method = this.editingCategory ? 'PATCH' : 'POST'
+        
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            title: this.categoryForm.title,
+            description: this.categoryForm.description || ''
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error(`Failed to ${this.editingCategory ? 'update' : 'create'} category`)
+        }
+        
+        const savedCategory = await response.json()
         
         if (this.editingCategory) {
+          // Update local categories array
           const index = this.categories.findIndex(c => c.id === this.editingCategory.id)
           if (index !== -1) {
-            this.categories[index] = {
-              ...this.categories[index],
-              name: this.categoryForm.name,
-              color: this.categoryForm.color,
-              description: this.categoryForm.description
-            }
+            this.categories[index] = savedCategory
           }
+          alert('Category updated successfully!')
         } else {
-          const newCategory = {
-            id: `category-${Date.now()}`,
-            name: this.categoryForm.name,
-            color: this.categoryForm.color,
-            description: this.categoryForm.description,
-            doctorCount: 0
-          }
-          this.categories.push(newCategory)
+          // Add new category to local array
+          this.categories.push(savedCategory)
+          alert('Category created successfully!')
         }
         
         this.closeModals()
@@ -883,14 +906,41 @@ export default {
           throw new Error('Authentication required')
         }
         
-        await new Promise(resolve => setTimeout(resolve, 800))
+        const response = await fetch(`${this.apiBaseUrl}/categories/${categoryId}/`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete category')
+        }
         
         this.categories = this.categories.filter(c => c.id !== categoryId)
+        alert('Category deleted successfully!')
         
       } catch (err) {
         console.error('Error deleting category:', err)
         throw err
       }
+    },
+    
+    // Helper method to get consistent colors for categories
+    getCategoryColor(categoryId) {
+      // Use a simple hash to assign consistent colors
+      const colorMap = {
+        '1': '#4299e1', // Cardiology
+        '2': '#48bb78', // Dermatology
+        '3': '#ed8936', // Pediatrics
+        '4': '#9f7aea', // Neurology
+        '5': '#f56565', // Orthopedics
+        '6': '#38b2ac', // Psychiatry
+        '7': '#ed64a6', // Dentistry
+        '8': '#667eea', // Ophthalmology
+      }
+      
+      return colorMap[categoryId] || this.colorOptions[categoryId % this.colorOptions.length]
     },
     
     // ============ FILTER METHODS ============
@@ -950,22 +1000,22 @@ export default {
     
     // ============ CATEGORY METHODS ============
     getCategoryName(categoryId) {
-      const category = this.categories.find(c => c.id === categoryId)
-      return category ? category.name : categoryId
+      const category = this.categories.find(c => c.id == categoryId)
+      return category ? category.title : categoryId
     },
     
     editCategory(category) {
       this.editingCategory = category
       this.categoryForm = {
-        name: category.name,
-        color: category.color || '#4299e1',
+        title: category.title,
+        color: this.getCategoryColor(category.id),
         description: category.description || ''
       }
       this.showAddCategoryModal = true
     },
     
     confirmDeleteCategory(category) {
-      this.itemToDelete = { id: category.id, name: category.name }
+      this.itemToDelete = { id: category.id, title: category.title }
       this.deleteType = 'category'
       this.showDeleteModal = true
     },
@@ -1018,8 +1068,10 @@ export default {
       try {
         if (this.deleteType === 'doctor') {
           await this.deleteDoctor(this.itemToDelete.id)
+          alert('Doctor deleted successfully!')
         } else if (this.deleteType === 'category') {
           await this.deleteCategory(this.itemToDelete.id)
+          // No need for alert here as it's in deleteCategory method
         }
         
         this.closeDeleteModal()
@@ -1038,7 +1090,7 @@ export default {
       this.showAddDoctorModal = false
       this.editingCategory = null
       this.editingDoctor = null
-      this.categoryForm = { name: '', color: '#4299e1', description: '' }
+      this.categoryForm = { title: '', color: '#4299e1', description: '' }
       this.doctorForm = {
         firstName: '', lastName: '', email: '', phone: '',
         medicalCode: '', consultationFee: 100, categories: [], isActive: true
@@ -1055,6 +1107,17 @@ export default {
 </script>
 
 <style scoped>
+/* Add this new style for category description */
+.category-description {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.4;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Rest of your existing styles remain exactly the same */
 /* Admin Doctors Container */
 .admin-doctors-container {
   min-height: 100vh;

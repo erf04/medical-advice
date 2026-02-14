@@ -465,6 +465,7 @@ export default {
       });
 
       this.socket.on('disconnect', (reason) => {
+        alert('disconnected')
         console.log('❌ Disconnected:', reason);
         this.connected = false;
       });

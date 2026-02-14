@@ -666,6 +666,7 @@ export default {
   
   watch: {
     withdrawalAmount(newVal) {
+      console.log(newVal)
       this.validateWithdrawalAmount()
     }
   },
