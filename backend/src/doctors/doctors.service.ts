@@ -16,6 +16,7 @@ import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 import { log } from 'console';
 import { Review } from '../reviews/review.entity';
 import { ConfigService } from '@nestjs/config';
+import { Consultation, ConsultationStatus } from '../consultations/consultation.entity';
 
 @Injectable()
 export class DoctorsService {
@@ -29,7 +30,10 @@ export class DoctorsService {
     @InjectRepository(Review)
     private reviewRepo: Repository<Review>,
 
-    private configService:ConfigService
+    @InjectRepository(Consultation)
+    private consultationRepo: Repository<Consultation>,
+
+    private configService: ConfigService,
   ) {}
 
   async createProfile(user: User, dto: CreateDoctorProfileDto) {
@@ -143,13 +147,31 @@ export class DoctorsService {
       },
     });
 
-    if (!profile)
-      throw new NotFoundException('Doctor profile not found');
-    profile.consultationPrice = profile.consultationPrice ?? this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ?? 0;
-    profile.commissionPercent = profile.commissionPercent ?? this.configService.get<number>('DEFAULT_COMMISSION_PERCENT') ?? 0;
+    if (!profile) throw new NotFoundException('Doctor profile not found');
+    profile.consultationPrice =
+      profile.consultationPrice ??
+      this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ??
+      0;
+    profile.commissionPercent =
+      profile.commissionPercent ??
+      this.configService.get<number>('DEFAULT_COMMISSION_PERCENT') ??
+      0;
     /* ------------------------------- */
     /* Group schedules by dayOfWeek    */
     /* ------------------------------- */
+
+    const totalRevenueRaw = await this.consultationRepo
+      .createQueryBuilder('consultation')
+      .select('SUM(consultation.price)', 'total')
+      .where('consultation.doctorId = :doctorId', { doctorId: id })
+      .andWhere('consultation.status = :status', {
+        status: ConsultationStatus.FINISHED,
+      })
+      .getRawOne();
+
+    const totalRevenue = Number(totalRevenueRaw?.total ?? 0);
+
+
     const schedulesByDay = profile.schedules.reduce(
       (acc, schedule) => {
         const day = schedule.dayOfWeek;
@@ -176,6 +198,7 @@ export class DoctorsService {
     return instanceToPlain({
       ...profile,
       schedules: schedulesByDay,
+      totalRevenue
     });
   }
 
@@ -185,10 +208,16 @@ export class DoctorsService {
       relations: ['category', 'user'],
     });
     return doctors.map((d) => {
-        d.consultationPrice = d.consultationPrice ?? this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ?? 0;
-        d.commissionPercent = d.commissionPercent ?? this.configService.get<number>('DEFAULT_COMMISSION_PERCENT') ?? 0;
-        return instanceToPlain(d);
-      });
+      d.consultationPrice =
+        d.consultationPrice ??
+        this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ??
+        0;
+      d.commissionPercent =
+        d.commissionPercent ??
+        this.configService.get<number>('DEFAULT_COMMISSION_PERCENT') ??
+        0;
+      return instanceToPlain(d);
+    });
   }
 
   async getDoctorReviews(doctorUserId: number) {
