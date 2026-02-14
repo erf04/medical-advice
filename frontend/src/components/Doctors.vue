@@ -358,9 +358,7 @@
                 <button class="btn-list-profile" @click.stop="viewDoctorProfile(doctor)">
                   Profile
                 </button>
-                <button class="btn-list-book" @click.stop="bookAppointment(doctor)">
-                  Book Now
-                </button>
+                
               </div>
             </div>
           </div>

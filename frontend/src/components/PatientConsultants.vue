@@ -1089,7 +1089,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-height: 600px;
+  max-height: 700px;
   overflow-y: auto;
 }
 

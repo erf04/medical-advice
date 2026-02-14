@@ -1409,7 +1409,7 @@ export default {
     },
     
     goToAppointments() {
-      this.$router.push('/appointments');
+      this.$router.push('/consultants');
     },
     
     goToProfile() {

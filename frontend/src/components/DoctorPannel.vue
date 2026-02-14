@@ -84,7 +84,7 @@
                 </svg>
               </div>
               <div class="stat-info">
-                <span class="stat-value">{{ stats.totalPatients || 0 }}</span>
+                <span class="stat-value">{{ stats.patientCount || 0 }}</span>
                 <span class="stat-label">Total Patients</span>
               </div>
             </div>
@@ -106,7 +106,7 @@
                 </svg>
               </div>
               <div class="stat-info">
-                <span class="stat-value">${{ formatNumber(stats.totalEarnings) }}</span>
+                <span class="stat-value">${{ formatNumber(stats.totalRevenue) }}</span>
                 <span class="stat-label">Total Earnings</span>
               </div>
             </div>
@@ -375,8 +375,8 @@
                         <span class="income-type">{{ transaction.referenceType }}</span>
                       </div>
                       <div class="income-amount">
-                        <span class="amount" :class="{ 'positive': transaction.type === 'DEPOSIT', 'negative': transaction.type !== 'DEPOSIT' }">
-                          {{ transaction.type === 'DEPOSIT' ? '+' : '-' }}${{ formatNumber(transaction.amount) }}
+                        <span class="amount" :class="{ 'positive': transaction.type != 'DEPOSIT', 'negative': transaction.type === 'DEPOSIT' }">
+                          {{ transaction.type === 'DEPOSIT' ? '-' : '+' }}${{ formatNumber(transaction.amount) }}
                         </span>
                       </div>
                     </div>
@@ -405,9 +405,10 @@
           <form @submit.prevent="addScheduleSlot">
             <div class="form-group">
               <label for="dayOfWeek">Day of Week <span class="required">*</span></label>
+              <!-- In the Add Schedule Modal, update the select options -->
               <select id="dayOfWeek" v-model="newSchedule.dayOfWeek" required>
                 <option value="">Select Day</option>
-                <option v-for="day in weekDays" :key="day.id" :value="day.id">
+                <option v-for="day in weekDays" :key="day.id" :value="day.id.toString()">
                   {{ day.name }}
                 </option>
               </select>
@@ -649,7 +650,7 @@ export default {
       
       // New schedule form
       newSchedule: {
-        dayOfWeek: '',
+        dayOfWeek: 0,
         startTime: '',
         endTime: ''
       },
@@ -1030,49 +1031,65 @@ export default {
     },
     
     async addScheduleSlot() {
-      if (!this.newSchedule.dayOfWeek || !this.newSchedule.startTime || !this.newSchedule.endTime) return
-      
-      this.savingSchedule = true
-      
-      try {
-        const authToken = localStorage.getItem('authToken')
-        
-        const response = await fetch(`${this.apiBaseUrl}/doctors/schedule/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-          },
-          body: JSON.stringify({
-            dayOfWeek: parseInt(this.newSchedule.dayOfWeek),
-            startTime: this.newSchedule.startTime,
-            endTime: this.newSchedule.endTime
-          })
-        })
-        
-        if (!response.ok) {
-          throw new Error('Failed to add schedule slot')
-        }
-        
-        const newSlot = await response.json()
-        
-        // Add to local schedules
-        const dayKey = this.newSchedule.dayOfWeek.toString()
-        if (!this.schedules[dayKey]) {
-          this.schedules[dayKey] = []
-        }
-        this.schedules[dayKey].push(newSlot)
-        
-        this.closeScheduleModal()
-        alert('Time slot added successfully!')
-        
-      } catch (err) {
-        console.error('Error adding schedule slot:', err)
-        alert('Failed to add time slot')
-      } finally {
-        this.savingSchedule = false
+      if(!this.newSchedule.dayOfWeek){
+        this.newSchedule.dayOfWeek = '0'
       }
-    },
+  if (!this.newSchedule.startTime || !this.newSchedule.endTime) return
+  
+  this.savingSchedule = true
+  
+  try {
+    const authToken = localStorage.getItem('authToken')
+    if(!this.newSchedule.dayOfWeek){
+        this.newSchedule.dayOfWeek = '0'
+      }
+    // Parse the dayOfWeek as integer - it's a string now
+    const dayOfWeekValue = parseInt(this.newSchedule.dayOfWeek, 10);
+    
+    // Validate that it's a number between 0-6
+    if (isNaN(dayOfWeekValue) || dayOfWeekValue < 0 || dayOfWeekValue > 6) {
+      throw new Error('Invalid day of week');
+    }
+    
+    console.log('Selected day:', this.newSchedule.dayOfWeek);
+    console.log('Parsed day value:', dayOfWeekValue);
+    
+    const response = await fetch(`${this.apiBaseUrl}/doctors/schedule/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      },
+      body: JSON.stringify({
+        dayOfWeek: dayOfWeekValue, // Send as number
+        startTime: this.newSchedule.startTime,
+        endTime: this.newSchedule.endTime
+      })
+    })
+    
+    if (!response.ok) {
+      throw new Error('Failed to add schedule slot')
+    }
+    
+    const newSlot = await response.json()
+    
+    // Add to local schedules - use string key for consistency
+    const dayKey = dayOfWeekValue.toString()
+    if (!this.schedules[dayKey]) {
+      this.schedules[dayKey] = []
+    }
+    this.schedules[dayKey].push(newSlot)
+    
+    this.closeScheduleModal()
+    alert('Time slot added successfully!')
+    
+  } catch (err) {
+    console.error('Error adding schedule slot:', err)
+    alert('Failed to add time slot')
+  } finally {
+    this.savingSchedule = false
+  }
+},
     
     async deleteScheduleSlot(dayOfWeek, slotId) {
       if (!confirm('Are you sure you want to delete this time slot?')) return
@@ -1218,7 +1235,7 @@ export default {
     },
     
     goToReviews() {
-      this.$router.push('/doctor/reviews')
+      this.$router.push('/myreviews')
     },
     
     viewAllTransactions() {

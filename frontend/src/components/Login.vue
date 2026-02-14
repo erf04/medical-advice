@@ -1191,7 +1191,8 @@ export default {
             const errorData = await doctorProfileResponse.json()
             throw new Error(`Doctor profile creation failed: ${errorData.message || 'Unknown error'}`)
           }
-          
+          const res = await doctorProfileResponse.json()
+          localStorage.setItem('userId', JSON.stringify(res.id))
           console.log('Doctor profile completed successfully')
         } else {
           // Complete patient profile
@@ -1215,15 +1216,15 @@ export default {
             const errorData = await patientProfileResponse.json()
             throw new Error(`Patient profile creation failed: ${errorData.message || 'Unknown error'}`)
           }
-          const data = await patientProfileResponse.json()
-          
-          console.log('Patient profile completed successfully',data)
+          const res = await patientProfileResponse.json()
+          localStorage.setItem('userId', JSON.stringify(res.id))
+          console.log('Patient profile completed successfully')
         }
         
         // Store auth data in localStorage
         localStorage.setItem('authToken', this.accessToken)
         localStorage.setItem('userData', JSON.stringify(registerData.user))
-        localStorage.setItem('userId', JSON.stringify(registerData.id))
+        
         
         this.showMessage('Account created successfully! You are now logged in.', 'success')
         

@@ -516,7 +516,7 @@ export default {
       this.saving = true
       
       try {
-        const authToken = localStorage.getItem('authToken')
+        // const authToken = localStorage.getItem('authToken')
         
         if (this.editingAdmin) {
           // For editing, you might need a different endpoint
@@ -548,6 +548,7 @@ export default {
           }
           
           const data = await response.json()
+          console.log(data)
           
           // Refresh admins list
           await this.fetchAdmins()

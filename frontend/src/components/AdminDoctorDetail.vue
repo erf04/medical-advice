@@ -95,8 +95,8 @@
                 </svg>
               </div>
               <div class="stat-info">
-                <span class="stat-value">{{ stats.totalReviews || 0 }}</span>
-                <span class="stat-label">Total Reviews</span>
+                <span class="stat-value">{{ stats.totalRevenue || 0 }}</span>
+                <span class="stat-label">Total Revenue</span>
               </div>
             </div>
           </div>
@@ -337,8 +337,8 @@
                         <span class="transaction-date">{{ formatDate(transaction.createdAt) }}</span>
                       </div>
                       <div class="transaction-amount">
-                        <span :class="['amount', { positive: transaction.type === 'DEPOSIT' }]">
-                          {{ transaction.type === 'DEPOSIT' ? '+' : '-' }}${{ formatNumber(transaction.amount) }}
+                        <span :class="['amount', { positive: transaction.type != 'DEPOSIT' }]">
+                          {{ transaction.type === 'DEPOSIT' ? '-' : '+' }}${{ formatNumber(transaction.amount) }}
                         </span>
                       </div>
                     </div>
@@ -553,7 +553,7 @@ export default {
         const authToken = localStorage.getItem('authToken')
         
         // Use doctor ID in path parameter
-        const response = await fetch(`${this.apiBaseUrl}/wallet/doctor/${this.doctorId}/`, {
+        const response = await fetch(`${this.apiBaseUrl}/wallet/${this.doctorId}/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -580,7 +580,7 @@ export default {
         const authToken = localStorage.getItem('authToken')
         
         // Use doctor ID in path parameter
-        const response = await fetch(`${this.apiBaseUrl}/wallet/transactions/doctor/${this.doctorId}/`, {
+        const response = await fetch(`${this.apiBaseUrl}/wallet/transactions/${this.doctorId}/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
