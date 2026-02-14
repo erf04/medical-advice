@@ -15,6 +15,7 @@ import { Category } from '../categories/category.entity';
 import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 import { log } from 'console';
 import { Review } from '../reviews/review.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DoctorsService {
@@ -27,6 +28,8 @@ export class DoctorsService {
 
     @InjectRepository(Review)
     private reviewRepo: Repository<Review>,
+
+    private configService:ConfigService
   ) {}
 
   async createProfile(user: User, dto: CreateDoctorProfileDto) {
@@ -142,7 +145,8 @@ export class DoctorsService {
 
     if (!profile)
       throw new NotFoundException('Doctor profile not found');
-
+    profile.consultationPrice = profile.consultationPrice ?? this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ?? 0;
+    profile.commissionPercent = profile.commissionPercent ?? this.configService.get<number>('DEFAULT_COMMISSION_PERCENT') ?? 0;
     /* ------------------------------- */
     /* Group schedules by dayOfWeek    */
     /* ------------------------------- */
@@ -180,7 +184,11 @@ export class DoctorsService {
       where: { isActive: true },
       relations: ['category', 'user'],
     });
-    return doctors.map((d) => instanceToPlain(d));
+    return doctors.map((d) => {
+        d.consultationPrice = d.consultationPrice ?? this.configService.get<number>('DEFAULT_CONSULTATION_PRICE') ?? 0;
+        d.commissionPercent = d.commissionPercent ?? this.configService.get<number>('DEFAULT_COMMISSION_PERCENT') ?? 0;
+        return instanceToPlain(d);
+      });
   }
 
   async getDoctorReviews(doctorUserId: number) {
