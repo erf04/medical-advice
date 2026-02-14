@@ -12,9 +12,16 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
             </svg>
+            Settlement Requests
+          </button>
+          <button class="action-btn primary" @click="showAddCategoryModal = true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
+            </svg>
             Add Category
           </button>
-          <button class="action-btn secondary" @click="showAddDoctorModal = true">
+          <!-- In AdminDoctors.vue, update the Add Doctor button -->
+          <button class="action-btn secondary" @click="$emit('show-add-doctor')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
             </svg>
@@ -234,7 +241,7 @@
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button class="action-btn-icon view" @click="viewDoctor(doctor)" title="View Details">
+                    <button class="action-btn-icon view" @click="$emit('view-doctor-detail', doctor.id)" title="View Details">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
                         <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 4.75 11.999 4.75c4.97 0 9.185 2.223 10.675 6.696.123.377.123.754 0 1.131C21.185 17.024 16.97 19.25 12 19.25c-4.97 0-9.185-2.223-10.675-6.697a1.762 1.762 0 010-1.131zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
@@ -599,7 +606,7 @@ export default {
       ],
       
       // Default image
-      defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
+      defaultDoctorImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR99-ZMZeEtYlFVdT-HN3Hz0f_i64Zf76D67g&s'
     }
   },
   
@@ -711,9 +718,7 @@ export default {
         email: apiDoctor.user?.email || '',
         phone: apiDoctor.user?.phone || '',
         profileImage: this.defaultDoctorImage,
-        specialty: apiDoctor.categories && apiDoctor.categories.length > 0 
-          ? this.getCategoryName(apiDoctor.categories[0]) 
-          : 'General Medicine',
+        specialty: apiDoctor.category?.title ||  'General Medicine',
         medicalCode: apiDoctor.medicalCode || '',
         contactInfo: apiDoctor.contactInfo || apiDoctor.user?.phone || '',
         consultationFee: apiDoctor.consultationPrice || 0,

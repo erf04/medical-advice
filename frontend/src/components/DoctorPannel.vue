@@ -20,26 +20,7 @@
           <h1 class="header-title">Doctor Dashboard</h1>
           <p class="header-subtitle">Manage your practice and consultations</p>
         </div>
-        <div class="header-actions">
-          <button class="header-action-btn" @click="goToDashboard">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z" clip-rule="evenodd" />
-            </svg>
-            Dashboard
-          </button>
-          <button class="header-action-btn" @click="goToNews">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M4.125 3C3.089 3 2.25 3.84 2.25 4.875V18a3 3 0 003 3h15a3 3 0 01-3-3V4.875C17.25 3.839 16.41 3 15.375 3H4.125zM12 9.75a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5H12zm-.75-2.25a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5H12a.75.75 0 01-.75-.75zM6 12.75a.75.75 0 000 1.5h7.5a.75.75 0 000-1.5H6zm-.75 3.75a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5H6a.75.75 0 01-.75-.75zM6 6.75a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h3a.75.75 0 00.75-.75v-3A.75.75 0 009 6.75H6z" clip-rule="evenodd" />
-            </svg>
-            News
-          </button>
-          <button class="header-action-btn" @click="goToMyConsultants">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.786 0 011.019-4.38z" clip-rule="evenodd" />
-            </svg>
-            My Consultants
-          </button>
-        </div>
+        
         <div class="user-profile" @click="showProfileMenu = !showProfileMenu">
           <img :src="doctor?.profileImage || defaultDoctorImage" alt="Profile" class="profile-img">
           <div class="profile-menu" v-if="showProfileMenu" v-click-outside="() => showProfileMenu = false">
@@ -55,9 +36,9 @@
               </svg>
               My Consultants
             </div>
-            <div class="menu-item" @click="goToConsultants">
+            <div class="menu-item" @click="goToReviews">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.786 0 011.019-4.38z" clip-rule="evenodd" />
+                <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
               </svg>
               My Reviews
             </div>
@@ -228,7 +209,15 @@
                   </div>
                   <div class="detail-row">
                     <span class="detail-label">Category:</span>
-                    <span class="detail-value">{{ doctor.category || 'Not specified' }}</span>
+                    <span class="detail-value">{{ doctor.category?.title || 'Not specified' }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Fee:</span>
+                    <span class="detail-value">{{ doctor.consultationPrice || 0 }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">Comission Percent:</span>
+                    <span class="detail-value">{{ doctor.commissionPercent || 0 }}%</span>
                   </div>
                   <div class="detail-row">
                     <span class="detail-label">Status:</span>
@@ -303,11 +292,11 @@
                 </div>
 
                 <div class="wallet-actions">
-                  <button class="wallet-btn primary" @click="withdrawFunds">
+                  <button class="wallet-btn primary" @click="showWithdrawalConsultationsModalّFunct">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                       <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-.53 14.03a.75.75 0 001.06 0l3-3a.75.75 0 10-1.06-1.06l-1.72 1.72V6.75a.75.75 0 00-1.5 0v7.94l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3z" clip-rule="evenodd" />
                     </svg>
-                    Withdraw Funds
+                    Request Withdrawal
                   </button>
                   <button class="wallet-btn secondary" @click="viewWithdrawalHistory">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -321,7 +310,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
                   </svg>
-                  <p>Withdrawal requests are processed within 3-5 business days after admin approval.</p>
+                  <p>Withdrawal requests are sent to admin for approval. Processing takes 3-5 business days.</p>
                 </div>
               </div>
 
@@ -376,7 +365,7 @@
 
                   <div v-else>
                     <div 
-                      v-for="transaction in filteredTransactions" 
+                      v-for="transaction in filteredTransactions.slice(0, 5)" 
                       :key="transaction.id"
                       class="income-item"
                     >
@@ -460,40 +449,147 @@
       </div>
     </div>
 
-    <!-- Withdrawal Modal -->
-    <WithdrawalModal
-      v-if="showWithdrawalModal"
-      :availableBalance="walletBalance"
-      :withdrawalMethods="withdrawalMethods"
-      @close="closeWithdrawalModal"
-      @submit="processWithdrawal"
-    />
+    <!-- Withdrawal Consultation Selection Modal -->
+    <div v-if="showWithdrawalConsultationsModal" class="modal-overlay" @click.self="closeWithdrawalConsultationsModal">
+      <div class="modal-content large">
+        <div class="modal-header">
+          <h3>Select Consultation for Withdrawal</h3>
+          <button class="modal-close" @click="closeWithdrawalConsultationsModal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div v-if="loadingConsultations" class="loading-mini">
+            <div class="spinner-small"></div>
+            <span>Loading consultations...</span>
+          </div>
+
+          <div v-else-if="finishedConsultations.length === 0" class="empty-consultations">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd" />
+            </svg>
+            <h3>No Finished Consultations</h3>
+            <p>You don't have any finished consultations available for withdrawal.</p>
+          </div>
+
+          <div v-else class="consultations-list">
+            <div 
+              v-for="consultation in finishedConsultations" 
+              :key="consultation.id"
+              :class="['consultation-item', { selected: selectedWithdrawalConsultation?.id === consultation.id }]"
+              @click="selectedWithdrawalConsultation = consultation"
+            >
+              <div class="consultation-info">
+                <div class="patient-details">
+                  <strong>{{ consultation.patient?.user?.firstName }} {{ consultation.patient?.user?.lastName }}</strong>
+                  <span class="consultation-date">{{ formatJalaliDate(consultation.reservedDate) }}</span>
+                </div>
+                <div class="consultation-meta">
+                  <span class="consultation-time">{{ consultation.startTime }} - {{ consultation.endTime }}</span>
+                  <span class="consultation-subject">{{ consultation.subject }}</span>
+                </div>
+              </div>
+              <div class="consultation-amount">
+                <span class="amount">${{ formatNumber(consultation.price) }}</span>
+                <span class="commission">Commission: {{ consultation.commissionPercent }}%</span>
+              </div>
+              <div class="consultation-selector">
+                <div class="radio-circle" :class="{ selected: selectedWithdrawalConsultation?.id === consultation.id }"></div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="selectedWithdrawalConsultation" class="selected-summary">
+            <h4>Selected Consultation</h4>
+            <div class="summary-details">
+              <div class="summary-row">
+                <span>Patient:</span>
+                <strong>{{ selectedWithdrawalConsultation.patient?.user?.firstName }} {{ selectedWithdrawalConsultation.patient?.user?.lastName }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>Amount:</span>
+                <strong>${{ formatNumber(selectedWithdrawalConsultation.price) }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>Commission:</span>
+                <strong>{{ selectedWithdrawalConsultation.commissionPercent }}%</strong>
+              </div>
+              <div class="summary-row total">
+                <span>You'll receive:</span>
+                <strong class="net-amount">
+                  ${{ formatNumber(selectedWithdrawalConsultation.price * (1 - selectedWithdrawalConsultation.commissionPercent / 100)) }}
+                </strong>
+              </div>
+            </div>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="button" class="modal-btn secondary" @click="closeWithdrawalConsultationsModal">
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              class="modal-btn primary" 
+              :disabled="!selectedWithdrawalConsultation || processingWithdrawal"
+              @click="requestSettlement"
+            >
+              <span v-if="processingWithdrawal" class="spinner-small"></span>
+              <span v-else>Request Withdrawal</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Success Modal -->
-    <SuccessModal
-      v-if="showSuccessModal"
-      :requestId="withdrawalRequestId"
-      :amount="withdrawalAmount"
-      :method="getWithdrawalMethodName(selectedWithdrawalMethod)"
-      :amountToReceive="amountToReceive"
-      @close="showSuccessModal = false"
-    />
+    <div v-if="showSuccessModal" class="modal-overlay" @click.self="showSuccessModal = false">
+      <div class="modal-content success-modal">
+        <div class="modal-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <h3>Withdrawal Request Submitted!</h3>
+        <p>Your request has been sent to admin for approval.</p>
+        
+        <div v-if="selectedWithdrawalConsultation" class="withdrawal-details-modal">
+          <div class="detail-row">
+            <span>Consultation ID:</span>
+            <strong>{{ selectedWithdrawalConsultation.id }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>Amount:</span>
+            <strong class="amount">${{ formatNumber(selectedWithdrawalConsultation.price) }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>You'll receive:</span>
+            <strong class="balance">${{ formatNumber(selectedWithdrawalConsultation.price * (1 - selectedWithdrawalConsultation.commissionPercent / 100)) }}</strong>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="modal-btn primary" @click="showSuccessModal = false">
+            Close
+          </button>
+        </div>
+        
+        <p class="modal-note">
+          You will receive a notification once your request is approved by admin.
+          Processing time is 3-5 business days.
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// Import components if you want to split them
-// import WithdrawalModal from './WithdrawalModal.vue'
-// import SuccessModal from './SuccessModal.vue'
-import moment from 'moment';
+import moment from 'moment-jalaali';
 
 export default {
   name: 'DoctorPanel',
-  
-  // components: {
-  //   WithdrawalModal,
-  //   SuccessModal
-  // },
   
   data() {
     return {
@@ -503,6 +599,16 @@ export default {
       selectedPeriod: 'Today',
       showAddScheduleModal: false,
       savingSchedule: false,
+      
+      // Withdrawal
+      showWithdrawalConsultationsModal: false,
+      loadingConsultations: false,
+      consultations: [],
+      selectedWithdrawalConsultation: null,
+      processingWithdrawal: false,
+      
+      // Success modal
+      showSuccessModal: false,
       
       // API Configuration
       apiBaseUrl: 'http://localhost:8000',
@@ -555,38 +661,11 @@ export default {
       savingConsultationDuration: false,
       savingAvailability: false,
       
-      // Withdrawal
-      showWithdrawalModal: false,
-      withdrawalAmount: '',
-      withdrawalAmountError: '',
-      selectedWithdrawalMethod: 'bank',
-      processingWithdrawal: false,
-      withdrawalRequestId: '',
-      
-      // Success modal
-      showSuccessModal: false,
-      
-      // Quick amounts for withdrawal
+      // Quick amounts for withdrawal (keeping for compatibility)
       withdrawalQuickAmounts: [100, 250, 500, 1000],
       
       // Time periods for filtering
       timePeriods: ['Today', 'Week', 'Month', 'Year', 'All'],
-      
-      // Withdrawal methods
-      withdrawalMethods: [
-        {
-          id: 'bank',
-          name: 'Bank Transfer',
-          accountInfo: '**** 1234 • Chase Bank',
-          icon: 'M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z'
-        },
-        {
-          id: 'paypal',
-          name: 'PayPal',
-          accountInfo: 'doctor@example.com',
-          icon: 'M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9A.75.75 0 0115 9V5.25a1.5 1.5 0 00-1.5-1.5h-6z'
-        }
-      ],
       
       // Default images
       defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
@@ -644,30 +723,8 @@ export default {
       })
     },
     
-    processingFee() {
-      const amount = parseFloat(this.withdrawalAmount) || 0
-      return amount * 0.02 // 2% processing fee
-    },
-    
-    amountToReceive() {
-      const amount = parseFloat(this.withdrawalAmount) || 0
-      return amount - this.processingFee
-    },
-    
-    canProcessWithdrawal() {
-      const amount = parseFloat(this.withdrawalAmount)
-      return amount && 
-             amount >= 10 && 
-             amount <= this.walletBalance && 
-             !this.withdrawalAmountError && 
-             this.selectedWithdrawalMethod
-    }
-  },
-  
-  watch: {
-    withdrawalAmount(newVal) {
-      console.log(newVal)
-      this.validateWithdrawalAmount()
+    finishedConsultations() {
+      return this.consultations.filter(c => c.status === 'FINISHED')
     }
   },
   
@@ -682,8 +739,8 @@ export default {
       
       try {
         // Get doctor ID from user data
-        const userId = JSON.parse(localStorage.getItem('userId') || '{}')
-        this.doctorId = userId
+        const userid = JSON.parse(localStorage.getItem('userId') || '{}')
+        this.doctorId = userid
         
         await Promise.all([
           this.fetchDoctorData(),
@@ -709,7 +766,7 @@ export default {
         if (!authToken) {
           throw new Error('Authentication required')
         }
-        
+        console.log(this.doctorId);
         const response = await fetch(`${this.apiBaseUrl}/doctors/${this.doctorId}/`, {
           method: 'GET',
           headers: {
@@ -721,9 +778,9 @@ export default {
         if (!response.ok) {
           throw new Error('Failed to fetch doctor data')
         }
-        
-        const data = await response.json()
-        
+        console.log(123)
+        const data = await response.json();
+        console.log(5678)
         this.doctor = {
           id: data.id,
           firstName: data.user?.firstName || '',
@@ -740,7 +797,8 @@ export default {
           commissionPercent: data.commissionPercent || 0,
           isVerified: !!data.medicalCode,
           experience: this.calculateExperience(data.user?.createdAt),
-          specialty: data.category || 'General Medicine'
+          specialty: data.category?.title || 'General Medicine',
+          walletId: `DR-${data.id}`
         }
         
         // Store schedules
@@ -755,7 +813,7 @@ export default {
         }
         
       } catch (err) {
-        console.error('Error fetching doctor data:', err)
+        console.error('Error fetching doctor dataaaaaaaaa:', err)
         throw new Error('Failed to load doctor information')
       }
     },
@@ -810,6 +868,73 @@ export default {
       }
     },
     
+    async fetchConsultations() {
+      this.loadingConsultations = true
+      
+      try {
+        const authToken = localStorage.getItem('authToken')
+        
+        const response = await fetch(`${this.apiBaseUrl}/doctor/consultations/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch consultations')
+        }
+        
+        const data = await response.json()
+        console.log(data)
+        this.consultations = data || []
+        
+      } catch (err) {
+        console.error('Error fetching consultations:', err)
+        alert('Failed to load consultations. Please try again.')
+      } finally {
+        this.loadingConsultations = false
+      }
+    },
+    
+    async requestSettlement() {
+      if (!this.selectedWithdrawalConsultation) return
+      
+      this.processingWithdrawal = true
+      
+      try {
+        const authToken = localStorage.getItem('authToken')
+        const consultationId = this.selectedWithdrawalConsultation.id
+        
+        const response = await fetch(`${this.apiBaseUrl}/settlements/${consultationId}/request-settlement/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to request withdrawal')
+        }
+        
+        // Update local wallet balance
+        const amount = this.selectedWithdrawalConsultation.price
+        this.walletBalance -= amount
+        
+        // Close modal and show success
+        this.showWithdrawalConsultationsModal = false
+        this.showSuccessModal = true
+        
+      } catch (err) {
+        console.error('Error requesting withdrawal:', err)
+        alert('Failed to submit withdrawal request. Please try again.')
+      } finally {
+        this.processingWithdrawal = false
+      }
+    },
+    
     async updateMaxPatients() {
       if (this.savingMaxPatients) return
       
@@ -832,10 +957,10 @@ export default {
           throw new Error('Failed to update max patients')
         }
         
-        // this.$toast.success('Maximum concurrent patients updated successfully!')
+        alert('Maximum concurrent patients updated successfully!')
       } catch (err) {
         console.error('Error updating max patients:', err)
-        // this.$toast.error('Failed to update maximum patients')
+        alert('Failed to update maximum patients')
       } finally {
         this.savingMaxPatients = false
       }
@@ -863,10 +988,10 @@ export default {
           throw new Error('Failed to update consultation price')
         }
         
-        // this.$toast.success('Consultation price updated successfully!')
+        alert('Consultation price updated successfully!')
       } catch (err) {
         console.error('Error updating consultation price:', err)
-        // this.$toast.error('Failed to update consultation price')
+        alert('Failed to update consultation price')
       } finally {
         this.savingConsultationPrice = false
       }
@@ -894,10 +1019,10 @@ export default {
           throw new Error('Failed to update availability')
         }
         
-        // this.$toast.success(`You are now ${this.doctor.isActive ? 'available' : 'not available'} for consultations`)
+        alert(`You are now ${this.doctor.isActive ? 'available' : 'not available'} for consultations`)
       } catch (err) {
         console.error('Error updating availability:', err)
-        // this.$toast.error('Failed to update availability')
+        alert('Failed to update availability')
         this.doctor.isActive = !this.doctor.isActive
       } finally {
         this.savingAvailability = false
@@ -939,11 +1064,11 @@ export default {
         this.schedules[dayKey].push(newSlot)
         
         this.closeScheduleModal()
-        // this.$toast.success('Time slot added successfully!')
+        alert('Time slot added successfully!')
         
       } catch (err) {
         console.error('Error adding schedule slot:', err)
-        // this.$toast.error('Failed to add time slot')
+        alert('Failed to add time slot')
       } finally {
         this.savingSchedule = false
       }
@@ -955,8 +1080,6 @@ export default {
       try {
         const authToken = localStorage.getItem('authToken')
         
-        // Note: You might need an API endpoint for deleting schedule slots
-        // This is a placeholder - adjust according to your API
         const response = await fetch(`${this.apiBaseUrl}/doctors/schedule/${slotId}/`, {
           method: 'DELETE',
           headers: {
@@ -974,11 +1097,11 @@ export default {
           this.schedules[dayKey] = this.schedules[dayKey].filter(slot => slot.id !== slotId)
         }
         
-        // this.$toast.success('Time slot deleted successfully!')
+        alert('Time slot deleted successfully!')
         
       } catch (err) {
         console.error('Error deleting schedule slot:', err)
-        // this.$toast.error('Failed to delete time slot')
+        alert('Failed to delete time slot')
       }
     },
     
@@ -1030,6 +1153,12 @@ export default {
       }
     },
     
+    formatJalaliDate(dateString) {
+      if (!dateString) return 'N/A'
+      const [year, month, day] = dateString.split('-').map(Number)
+      return moment(`${year}/${month}/${day}`, 'jYYYY/jM/jD').format('jYYYY/jMM/jDD')
+    },
+    
     // Schedule Methods
     increaseMaxPatients() {
       if (this.doctor.maxConcurrentConsultations < 10) {
@@ -1048,7 +1177,7 @@ export default {
       
       this.savingConsultationDuration = true
       setTimeout(() => {
-        // this.$toast.success('Consultation duration updated successfully!')
+        alert('Consultation duration updated successfully!')
         this.savingConsultationDuration = false
       }, 800)
     },
@@ -1064,70 +1193,15 @@ export default {
     },
     
     // Withdrawal Methods
-    withdrawFunds() {
-      this.showWithdrawalModal = true
-      this.withdrawalAmount = ''
-      this.withdrawalAmountError = ''
-      this.selectedWithdrawalMethod = 'bank'
+    showWithdrawalConsultationsModalّFunct() {
+      this.showWithdrawalConsultationsModal = true
+      this.selectedWithdrawalConsultation = null
+      this.fetchConsultations()
     },
     
-    closeWithdrawalModal() {
-      this.showWithdrawalModal = false
-      this.withdrawalAmount = ''
-      this.withdrawalAmountError = ''
-      this.processingWithdrawal = false
-    },
-    
-    validateWithdrawalAmount() {
-      const amount = parseFloat(this.withdrawalAmount)
-      
-      if (!this.withdrawalAmount || isNaN(amount)) {
-        this.withdrawalAmountError = 'Please enter a valid amount'
-        return
-      }
-      
-      if (amount < 10) {
-        this.withdrawalAmountError = 'Minimum withdrawal amount is $10'
-        return
-      }
-      
-      if (amount > this.walletBalance) {
-        this.withdrawalAmountError = `Cannot withdraw more than available balance ($${this.formatNumber(this.walletBalance)})`
-        return
-      }
-      
-      this.withdrawalAmountError = ''
-    },
-    
-    async processWithdrawal(withdrawalData) {
-      this.processingWithdrawal = true
-      
-      try {
-        const amount = parseFloat(withdrawalData.amount)
-        
-        // In real app: API call to submit withdrawal request
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        
-        this.withdrawalRequestId = 'WDR-' + Date.now() + '-' + Math.floor(Math.random() * 1000)
-        this.withdrawalAmount = amount
-        this.selectedWithdrawalMethod = withdrawalData.methodId
-        
-        this.walletBalance -= amount
-        
-        this.showWithdrawalModal = false
-        this.showSuccessModal = true
-        
-      } catch (err) {
-        console.error('Error processing withdrawal:', err)
-        // this.$toast.error('Failed to submit withdrawal request. Please try again.')
-      } finally {
-        this.processingWithdrawal = false
-      }
-    },
-    
-    getWithdrawalMethodName(methodId) {
-      const method = this.withdrawalMethods.find(m => m.id === methodId)
-      return method ? method.name : 'Unknown'
+    closeWithdrawalConsultationsModal() {
+      this.showWithdrawalConsultationsModal = false
+      this.selectedWithdrawalConsultation = null
     },
     
     // Navigation Methods
@@ -1143,6 +1217,10 @@ export default {
       this.$router.push('/doctor/consultants')
     },
     
+    goToReviews() {
+      this.$router.push('/doctor/reviews')
+    },
+    
     viewAllTransactions() {
       this.$router.push('/doctor/transactions')
     },
@@ -1151,12 +1229,8 @@ export default {
       this.$router.push('/doctor/withdrawal-history')
     },
     
-    viewAllIncomeHistory() {
-      this.$router.push('/doctor/transactions')
-    },
-    
     changeAvatar() {
-      // this.$toast.info('Avatar change functionality coming soon!')
+      alert('Avatar change functionality coming soon!')
     },
     
     goToProfile() {
@@ -1164,7 +1238,7 @@ export default {
     },
     
     goToConsultants() {
-      this.$router.push('/doctor/consultants')
+      this.$router.push('/myconsultants')
     },
     
     handleLogout() {
@@ -1177,6 +1251,178 @@ export default {
 </script>
 
 <style scoped>
+/* Add these new styles for the withdrawal modal */
+.consultations-list {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.consultation-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.consultation-item:hover {
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.consultation-item.selected {
+  border-color: #667eea;
+  background: #f7f9fc;
+}
+
+.consultation-info {
+  flex: 1;
+}
+
+.patient-details {
+  margin-bottom: 4px;
+}
+
+.patient-details strong {
+  font-size: 15px;
+  color: #2d3748;
+  margin-right: 12px;
+}
+
+.consultation-date {
+  font-size: 13px;
+  color: #718096;
+}
+
+.consultation-meta {
+  display: flex;
+  gap: 12px;
+}
+
+.consultation-time {
+  font-size: 12px;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.consultation-subject {
+  font-size: 12px;
+  color: #718096;
+}
+
+.consultation-amount {
+  text-align: right;
+  margin-right: 16px;
+}
+
+.consultation-amount .amount {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #48bb78;
+}
+
+.consultation-amount .commission {
+  font-size: 11px;
+  color: #718096;
+}
+
+.consultation-selector {
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radio-circle {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.radio-circle.selected {
+  border-color: #667eea;
+  background: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.selected-summary {
+  background: #f7f9fc;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.selected-summary h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 16px;
+}
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-row.total {
+  border-bottom: none;
+  padding-top: 8px;
+  font-size: 16px;
+}
+
+.net-amount {
+  color: #48bb78;
+  font-size: 20px;
+}
+
+.empty-consultations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-consultations svg {
+  width: 60px;
+  height: 60px;
+  color: #cbd5e0;
+  margin-bottom: 16px;
+}
+
+.empty-consultations h3 {
+  font-size: 18px;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.empty-consultations p {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+}
+
+
 /* Add these new styles */
 .schedule-section {
   background: rgba(255, 255, 255, 0.95);

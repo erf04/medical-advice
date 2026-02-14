@@ -549,22 +549,41 @@
               </div>
             </div>
 
+            <!-- In the Doctor Information section, replace the categories-container div -->
             <div class="form-group">
               <label for="categories">
                 <span>Medical Specialties</span>
                 <span class="required">*</span>
                 <span class="label-note">(Select at least one)</span>
               </label>
-              <div class="categories-container">
+              
+              <!-- Loading state for categories -->
+              <div v-if="loadingCategories" class="loading-categories">
+                <div class="spinner-small"></div>
+                <span>Loading categories...</span>
+              </div>
+              
+              <!-- Error state -->
+              <div v-else-if="categoriesError" class="categories-error">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                </svg>
+                <p>{{ categoriesError }}</p>
+                <button @click="fetchCategories" class="retry-small">Retry</button>
+              </div>
+              
+              <!-- Categories from API -->
+              <div v-else class="categories-container">
                 <div 
-                  v-for="category in medicalCategories" 
+                  v-for="category in categories" 
                   :key="category.id"
                   :class="['category-tag', { selected: signupData.categories.includes(category.id) }]"
                   @click="toggleCategory(category.id)"
                 >
-                  {{ category.name }}
+                  {{ category.title }}
                 </div>
               </div>
+              
               <div v-if="signupData.categories.length > 0" class="selected-categories">
                 <strong>Selected:</strong> {{ selectedCategoriesText }}
               </div>
@@ -754,11 +773,23 @@ export default {
       // Store API URLs
       apiBaseUrl: 'http://localhost:8000',
       accessToken: null,
-      userRole: null
+      userRole: null,
+
+      categories: [], // For storing categories from API
+      loadingCategories: false,
+      categoriesError: null,
     }
   },
   
   computed: {
+    selectedCategoriesText() {
+      return this.signupData.categories
+        .map(id => {
+          const category = this.categories.find(c => c.id === id);
+          return category ? category.title : id;
+        })
+        .join(', ');
+    },
     isValidLogin() {
       return this.loginData.identifier && this.loginData.password && !this.identifierError
     },
@@ -782,14 +813,40 @@ export default {
       }
     },
     
-    selectedCategoriesText() {
-      return this.signupData.categories
-        .map(id => this.medicalCategories.find(c => c.id === id)?.name)
-        .join(', ')
+    
+  },
+  async mounted() {
+    await this.fetchCategories();
+  },
+  methods: {
+    async fetchCategories() {
+    this.loadingCategories = true;
+    this.categoriesError = null;
+    
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/categories/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      
+      const data = await response.json();
+      this.categories = data || [];
+      
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      this.categoriesError = err.message;
+      // Fallback to static categories if API fails
+      this.categories = this.medicalCategories;
+    } finally {
+      this.loadingCategories = false;
     }
   },
-  
-  methods: {
     toggleMode(isLogin) {
       this.isLoginMode = isLogin
       this.signupStep = 1
@@ -1103,6 +1160,7 @@ export default {
         this.accessToken = registerData.accessToken
         this.userRole = registerData.user.role
         
+        
         // Step 2: Upload profile image if selected
         if (this.signupData.profileImageFile) {
           await this.uploadProfileImage();
@@ -1114,7 +1172,7 @@ export default {
           const doctorProfilePayload = {
             medicalCode: this.signupData.medicalCode,
             contactInfo: this.signupData.contactInfo,
-            category: this.signupData.categories[0]
+            category: parseInt(this.signupData.categories[0]) 
             // Note: Your API example shows "contactInfo" but might need adjustment
           }
           
@@ -1165,6 +1223,7 @@ export default {
         // Store auth data in localStorage
         localStorage.setItem('authToken', this.accessToken)
         localStorage.setItem('userData', JSON.stringify(registerData.user))
+        localStorage.setItem('userId', JSON.stringify(registerData.id))
         
         this.showMessage('Account created successfully! You are now logged in.', 'success')
         
@@ -1205,6 +1264,67 @@ export default {
 
 
 <style scoped>
+/* Add these styles */
+.loading-categories {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f7f9fc;
+  border-radius: 12px;
+  color: #718096;
+  font-size: 14px;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.categories-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 12px;
+  color: #c53030;
+  font-size: 14px;
+}
+
+.categories-error svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.categories-error p {
+  flex: 1;
+  margin: 0;
+}
+
+.retry-small {
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retry-small:hover {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
 /* Base Styles */
 * {
   margin: 0;

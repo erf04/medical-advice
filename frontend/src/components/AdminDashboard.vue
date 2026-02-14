@@ -60,6 +60,10 @@
         <component 
           :is="currentComponent" 
           :key="currentView"
+          :doctorId="selectedDoctorId"
+          @show-add-doctor="handleShowAddDoctor"
+          @show-doctors-list="handleShowDoctorsList"
+          @view-doctor-detail="handleViewDoctorDetail"
         />
       </div>
     </div>
@@ -68,7 +72,9 @@
 
 <script>
 import AdminDoctors from './AdminDoctors.vue'
-// import AdminPatients from './AdminPatients.vue'
+import AdminAddDoctor from './AdminAddingDoctor.vue' // Import the new component
+import AdminDoctorDetail from './AdminDoctorDetail.vue'
+import AdminPatients from './AdminPatients.vue'
 // import AdminAdmins from './AdminAdmins.vue'
 
 export default {
@@ -76,15 +82,18 @@ export default {
   
   components: {
     AdminDoctors,
-    // AdminPatients,
+    AdminAddDoctor, // Add it to components
+    AdminDoctorDetail,
+    AdminPatients,
     // AdminAdmins
   },
   
   data() {
     return {
       currentView: 'doctors', // Default view
+      selectedDoctorId: null,
       adminName: 'Admin User',
-      adminProfileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+      adminProfileImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR99-ZMZeEtYlFVdT-HN3Hz0f_i64Zf76D67g&s',
       
       menuItems: [
         {
@@ -125,8 +134,12 @@ export default {
       switch (this.currentView) {
         case 'doctors':
           return AdminDoctors
-        // case 'patients':
-        //   return AdminPatients
+        case 'add-doctor':
+          return AdminAddDoctor
+        case 'doctor-detail': // Add this
+          return AdminDoctorDetail
+        case 'patients':
+          return AdminPatients
         // case 'admins':
         //   return AdminAdmins
         default:
@@ -142,6 +155,23 @@ export default {
   methods: {
     navigateTo(view) {
       this.currentView = view
+    },
+    handleViewDoctorDetail(doctorId) {
+      console.log(doctorId)
+      this.selectedDoctorId = doctorId
+      this.currentView = 'doctor-detail'
+    },
+
+    handleViewDoctorReviews(doctorId) {
+      // This will be implemented later
+      console.log('View reviews for doctor:', doctorId)
+    },
+    handleShowAddDoctor() {
+      this.currentView = 'add-doctor'
+    },
+    
+    handleShowDoctorsList() {
+      this.currentView = 'doctors'
     },
     
     getAdminInfo() {
@@ -160,7 +190,6 @@ export default {
   }
 }
 </script>
-
 <!-- Keep all the styles from the previous version -->
 
 <style scoped>

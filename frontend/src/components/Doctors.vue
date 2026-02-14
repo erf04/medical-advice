@@ -80,10 +80,13 @@
               </svg>
               Specialty
             </label>
+            <!-- Category Filter - replace the existing select options -->
             <select v-model="selectedCategory" @change="applyFilters" class="filter-select">
               <option value="">All Specialties</option>
-              <option v-for="category in medicalCategories" :key="category.id" :value="category.id">
-                {{ category.name }}
+              <option v-if="loadingCategories" value="" disabled>Loading categories...</option>
+              <option v-else-if="categoriesError" value="" disabled>Error loading categories</option>
+              <option v-else v-for="category in categories" :key="category.id" :value="category.id">
+                {{ category.title }}
               </option>
             </select>
           </div>
@@ -159,6 +162,7 @@
         <div class="active-filters" v-if="hasActiveFilters">
           <span class="filters-label">Active Filters:</span>
           <div class="filter-tags">
+            <!-- Update the filter tag for category -->
             <span v-if="selectedCategory" class="filter-tag" @click="clearCategory">
               {{ getCategoryName(selectedCategory) }}
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -292,9 +296,7 @@
                 <button class="btn-profile" @click.stop="viewDoctorProfile(doctor)">
                   View Profile
                 </button>
-                <button class="btn-book" @click.stop="bookAppointment(doctor)">
-                  Book Now
-                </button>
+                
               </div>
             </div>
           </div>
@@ -444,6 +446,9 @@ export default {
   data() {
     return {
       // Doctors data from API
+      categories: [],
+    loadingCategories: false,
+    categoriesError: null,
       doctors: [],
       filteredDoctors: [],
       isLoading: false,
@@ -512,10 +517,42 @@ export default {
   },
   
   async mounted() {
-    await this.fetchDoctors()
+    await this.fetchCategories();
+    await this.fetchDoctors();
   },
   
   methods: {
+    async fetchCategories() {
+      this.loadingCategories = true;
+      this.categoriesError = null;
+      
+      try {
+        const authToken = localStorage.getItem('authToken');
+        
+        const response = await fetch(`${this.apiBaseUrl}/categories/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        
+        const data = await response.json();
+        this.categories = data || [];
+        
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        this.categoriesError = err.message;
+        // Fallback to empty array
+        this.categories = [];
+      } finally {
+        this.loadingCategories = false;
+      }
+    },
     async fetchDoctors() {
       this.isLoading = true
       this.error = null
@@ -589,27 +626,26 @@ export default {
         lastName: apiDoctor.user?.lastName || '',
         // Use profile image if available, otherwise default
         profileImage: this.defaultDoctorImage,
-        // For specialty, you might need to adjust based on your API
-        // Using medicalCode or categories from API
-        specialty: apiDoctor.category || 'General Medicine',
-        // Use fake rating data for now as per your requirement
-        rating: this.getRandomRating(),
-        reviewCount: this.getRandomReviewCount(),
+        // For specialty, use category title if available
+        specialty: this.getCategoryName(apiDoctor.category) || 'General Medicine',
+        // Use rating data from API
+        rating: apiDoctor.averageRating || this.getRandomRating(),
+        reviewCount: apiDoctor.totalReviews || this.getRandomReviewCount(),
         // For experience, you might need to add this field to your API
         // Using a placeholder for now
         experience: this.getRandomExperience(),
         // Languages - placeholder
-        languages: ['English', 'Arabic'], // You might want to add this to your API
+        languages: ['English', 'Arabic'],
         // Use consultation price from API
-        consultationFee: apiDoctor.consultationPrice || 100,
+        consultationFee: apiDoctor.consultationPrice || 0,
         // Online status - placeholder
         isOnline: Math.random() > 0.5,
         // Verified status - based on medicalCode presence
         isVerified: !!apiDoctor.medicalCode,
         // Available today - placeholder
         availableToday: Math.random() > 0.3,
-        // Categories from API or extract from medicalCode
-        categories: apiDoctor.category || '',
+        // Categories from API - store as array for filtering
+        categories: apiDoctor.category ? [apiDoctor.category] : [],
         // Additional info for profile view
         medicalCode: apiDoctor.medicalCode,
         contactInfo: apiDoctor.contactInfo,
@@ -730,14 +766,21 @@ export default {
         filtered = filtered.filter(doctor => 
           `${doctor.firstName} ${doctor.lastName}`.toLowerCase().includes(query) ||
           doctor.specialty.toLowerCase().includes(query) ||
-          (doctor.categories && doctor.categories.some(cat => cat.toLowerCase().includes(query)))
+          (doctor.categories && doctor.categories.some(cat => {
+            const catName = this.getCategoryName(cat);
+            return catName.toLowerCase().includes(query);
+          }))
         )
       }
       
-      // Apply category filter
+      // Apply category filter - compare IDs properly
       if (this.selectedCategory) {
         filtered = filtered.filter(doctor => 
-          doctor.categories && doctor.categories.includes(this.selectedCategory)
+          doctor.categories && doctor.categories.some(cat => {
+            // Handle if cat is object with id or just ID value
+            const catId = typeof cat === 'object' ? cat.id : cat;
+            return catId == this.selectedCategory;
+          })
         )
       }
       
@@ -781,8 +824,16 @@ export default {
     },
     
     getCategoryName(categoryId) {
-      const category = this.medicalCategories.find(c => c.id === categoryId)
-      return category ? category.name : categoryId
+      if (!categoryId) return 'General Medicine';
+      
+      // Handle if category is an object with id/title
+      if (typeof categoryId === 'object' && categoryId !== null) {
+        return categoryId.title || 'General Medicine';
+      }
+      
+      // Handle if categoryId is a number/string ID
+      const category = this.categories.find(c => c.id == categoryId);
+      return category ? category.title : 'General Medicine';
     },
     
     viewDoctorDetails(doctor) {

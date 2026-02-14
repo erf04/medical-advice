@@ -10,6 +10,7 @@ import AdminDashboard from '@/components/AdminDashboard.vue'
 import PatientChat from '@/components/PatientChat.vue'
 import DoctorReviews from '@/components/DoctorReviews.vue'
 import DoctorConsultants from '@/components/DoctorConsultants.vue'
+import AdminDoctorReviews from '@/components/AdminDoctorReviews.vue'
 
 const routes = [
   {
@@ -61,6 +62,11 @@ const routes = [
     path: '/myreviews',
     name: 'doctorreviews',
     component: DoctorReviews
+  },
+  {
+    path: '/doctorreviews',
+    name: 'admindoctorreviews',
+    component: AdminDoctorReviews
   },
   {
     path: '/dashboard',
