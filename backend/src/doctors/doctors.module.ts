@@ -16,16 +16,20 @@ import { DoctorAvailabilityController } from './doctor-availablity.controller';
 import { DoctorDashboardService } from './dashboard/doctor-dashboard.service';
 import { Category } from '../categories/category.entity';
 import { Review } from '../reviews/review.entity';
+import { AdminMessage } from './admin/admin-message.entity';
+import { AdminMessageService } from './admin/admin-message.service';
+import { AdminMessageController } from './admin/admin-message.controller';
+import { User } from '../users/users.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([DoctorProfile,Consultation,Category,Review]),
+    TypeOrmModule.forFeature([DoctorProfile,Consultation,Category,Review,AdminMessage,User]),
     TypeOrmModule.forFeature([DoctorSchedule]),
     forwardRef(()=> AuthModule)
   ],
   controllers: [DoctorsController,DoctorScheduleController,
-    DoctorDashboardController,DoctorAvailabilityController],
-  providers: [DoctorsService,DoctorScheduleService,DoctorDashboardService],
+    DoctorDashboardController,DoctorAvailabilityController, AdminMessageController],
+  providers: [DoctorsService,DoctorScheduleService,DoctorDashboardService, AdminMessageService],
   exports:[DoctorsService]
 })
 export class DoctorsModule {}

@@ -140,7 +140,8 @@ export class DoctorsService {
       },
     });
 
-    if (!profile) return null;
+    if (!profile)
+      throw new NotFoundException('Doctor profile not found');
 
     /* ------------------------------- */
     /* Group schedules by dayOfWeek    */
