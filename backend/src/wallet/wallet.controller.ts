@@ -46,4 +46,9 @@ export class WalletController {
   async getWalletByUserId(@Body('userId') userId:number) {
     return this.walletService.getWalletByUserId(userId);
   }
+
+  @Get('transactions/:id')
+  async getWalletTransactionsByUserId(@Body('userId') userId:number) {
+    return this.walletService.getTransactionsByWallet(userId);
+  }
 }
