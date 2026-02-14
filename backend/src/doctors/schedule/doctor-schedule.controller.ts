@@ -20,7 +20,6 @@ import { log } from 'console';
 
 @Controller('doctors/schedule')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(UserRole.DOCTOR)
 export class DoctorScheduleController {
   constructor(
     private readonly scheduleService: DoctorScheduleService,

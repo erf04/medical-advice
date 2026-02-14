@@ -71,9 +71,9 @@ export class DoctorsService {
   }
 
   async editProfile(user: User, dto: UpdateDoctorProfileDto) {
-    if (user.role !== UserRole.DOCTOR) {
-      throw new ForbiddenException('Only doctors can edit their profile');
-    }
+    // if (user.role !== UserRole.DOCTOR) {
+    //   throw new ForbiddenException('Only doctors can edit their profile');
+    // }
 
     const profile = await this.doctorRepo.findOne({
       where: { user: { id: user.id } },

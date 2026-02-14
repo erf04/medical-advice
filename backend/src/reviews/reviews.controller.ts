@@ -16,7 +16,6 @@ export class ReviewsController {
     private reviewService:ReviewsService
    ){} 
   @Post(':id/review')
-  @Roles(UserRole.PATIENT)
   async reviewConsultation(
     @Param('id') id: number,
     @Body() dto: CreateReviewDto,
@@ -25,7 +24,6 @@ export class ReviewsController {
   }
 
   @Get('all')
-  @Roles(UserRole.ADMIN)
   async getAllReviews() {
     return this.reviewService.getAllReviews();
   }

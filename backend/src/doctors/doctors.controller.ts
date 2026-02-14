@@ -15,7 +15,6 @@ export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
   @Post('profile')
-  @Roles(UserRole.DOCTOR)
   createProfile(@GetUser() user: User, @Body() dto: CreateDoctorProfileDto) {
     return this.doctorsService.createProfile(user, dto);
   }
@@ -26,7 +25,6 @@ export class DoctorsController {
   }
 
   @Get('profile')
-  @Roles(UserRole.DOCTOR)
   getMyProfile(@GetUser() user: User) {
     return this.doctorsService.getMyProfile(user);
   }
