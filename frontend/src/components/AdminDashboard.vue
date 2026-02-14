@@ -77,7 +77,7 @@ import AdminAddDoctor from './AdminAddingDoctor.vue' // Import the new component
 import AdminDoctorDetail from './AdminDoctorDetail.vue'
 import AdminPatients from './AdminPatients.vue'
 import Requests from './SettleupRequests.vue'
-// import AdminAdmins from './AdminAdmins.vue'
+import AdminAdmins from './AdminAdmins.vue'
 
 export default {
   name: 'AdminDashboard',
@@ -87,8 +87,8 @@ export default {
     AdminAddDoctor, // Add it to components
     AdminDoctorDetail,
     AdminPatients,
-    Requests
-    // AdminAdmins
+    Requests,
+    AdminAdmins
   },
   
   data() {
@@ -145,8 +145,8 @@ export default {
           return AdminPatients
         case 'requests':
           return Requests
-        // case 'admins':
-        //   return AdminAdmins
+        case 'admins':
+          return AdminAdmins
         default:
           return AdminDoctors
       }

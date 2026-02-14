@@ -1355,9 +1355,16 @@ export default {
 },
     
     getPersianDayOfWeek(gregorianDay) {
-      // Convert Gregorian day (0=Sunday) to Persian day (1=Saturday, 7=Friday)
-      return gregorianDay + 1;
-    },
+  // Convert Gregorian day (0=Sunday) to Persian day (0=Saturday, 1=Sunday, etc.)
+  if (gregorianDay === 6) return 0; // Saturday
+  if (gregorianDay === 0) return 1; // Sunday
+  if (gregorianDay === 1) return 2; // Monday
+  if (gregorianDay === 2) return 3; // Tuesday
+  if (gregorianDay === 3) return 4; // Wednesday
+  if (gregorianDay === 4) return 5; // Thursday
+  if (gregorianDay === 5) return 6; // Friday
+  return gregorianDay; // Fallback
+},
     
     previousMonth() {
       this.currentDate.subtract(1, 'jMonth');
