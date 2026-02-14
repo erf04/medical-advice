@@ -230,7 +230,7 @@ export class DoctorsService {
       where: {
         doctor: { id: doctor.id },
       },
-      relations: ['patient', 'consultation'],
+      relations: ['patient', 'patient.user','consultation'],
       order: {
         createdAt: 'DESC',
       },
