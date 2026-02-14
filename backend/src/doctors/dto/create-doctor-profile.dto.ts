@@ -21,6 +21,11 @@ export class CreateDoctorProfileDto {
   consultationPrice?: number;
 
   @IsNumber()
+  @Min(0)
+  @IsOptional()
+  commissionPercent?: number;
+
+  @IsNumber()
   @Min(1)
   category:number;
 }
