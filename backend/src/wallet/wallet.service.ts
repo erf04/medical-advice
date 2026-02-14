@@ -182,4 +182,11 @@ export class WalletService {
       order: { createdAt: 'DESC' },
     });
   }
+
+  async getWalletByUserId(userId:number){
+    return this.walletRepo.findOne({
+      where:{user:{id:userId}},
+      relations:{user:true}
+    });
+  }
 }

@@ -41,4 +41,9 @@ export class WalletController {
       user.id
     );
   }
+
+  @Get(':id/')
+  async getWalletByUserId(@Body('userId') userId:number) {
+    return this.walletService.getWalletByUserId(userId);
+  }
 }

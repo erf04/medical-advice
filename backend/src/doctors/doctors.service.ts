@@ -56,6 +56,8 @@ export class DoctorsService {
       category: category,
       user,
       maxConcurrentConsultations: dto.maxConcurrentConsultations ?? 1,
+      consultationPrice: dto.consultationPrice ?? 0,
+      commissionPercent: dto.commissionPercent ?? 0,
     });
 
     return this.doctorRepo.save(profile);

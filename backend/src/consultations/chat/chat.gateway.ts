@@ -47,6 +47,7 @@ export class ChatGateway {
     const consultationId = socket.handshake.query.consultationId as string;
 
     if (!consultationId) {
+      log('in handleConnection: Missing consultationId');
       socket.disconnect();
       return;
     }
@@ -58,6 +59,7 @@ export class ChatGateway {
     const user = await this.userService.findOneByPhone(payload.phoneNumber);
     // log('User found:', user);
     if (!user) {
+      log('in handleConnection: User not found for token payload', payload);
       socket.disconnect();
       return;
     }
@@ -69,6 +71,7 @@ export class ChatGateway {
     // log('Consultation found:', consultation);
 
     if (!consultation || consultation.status !== 'ACTIVE') {
+      log('in handleConnection: Consultation not found or not active for id', consultationId);
       socket.disconnect();
       return;
     }
