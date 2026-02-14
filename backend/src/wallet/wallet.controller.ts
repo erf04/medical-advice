@@ -5,6 +5,7 @@ import {
   Post,
   Body,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -48,7 +49,7 @@ export class WalletController {
   }
 
   @Get('transactions/:id')
-  async getWalletTransactionsByUserId(@Body('userId') userId:number) {
+  async getWalletTransactionsByUserId(@Param('userId') userId:number) {
     return this.walletService.getTransactionsByWallet(userId);
   }
 }
