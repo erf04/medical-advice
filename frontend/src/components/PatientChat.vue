@@ -17,18 +17,30 @@
           </svg>
         </div>
         
-        <div class="patient-info" @click="showPatientProfile">
-          <div class="patient-avatar">
-            <img :src="consultation?.patient?.user?.profileImage || defaultPatientImage" :alt="consultation?.patient?.user?.firstName">
-            <div class="online-status" :class="{ online: isPatientOnline }"></div>
+        <div class="doctor-info" @click="showDoctorProfile">
+          <div class="doctor-avatar">
+            <img :src="consultation?.doctor?.user?.profileImage || defaultDoctorImage" :alt="consultation?.doctor?.user?.firstName">
+            <div class="online-status" :class="{ online: isDoctorOnline }"></div>
           </div>
-          <div class="patient-details">
-            <h3 class="patient-name">{{ consultation?.patient?.user?.firstName }} {{ consultation?.patient?.user?.lastName }}</h3>
+          <div class="doctor-details">
+            <h3 class="doctor-name">Dr. {{ consultation?.doctor?.user?.firstName }} {{ consultation?.doctor?.user?.lastName }}</h3>
             <p class="consultation-status">{{ getConsultationStatusText }}</p>
           </div>
         </div>
 
         <div class="header-actions">
+          <!-- Rating Button - Visible for FINISHED consultations that are not rated yet -->
+          <button 
+            v-if="consultation?.status === 'FINISHED' && !consultation?.rated" 
+            class="header-action rating-btn" 
+            @click="openRatingModal"
+            title="Rate this consultation"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
           <!-- Info Button -->
           <button class="header-action" @click="showConsultationInfo = !showConsultationInfo">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -56,7 +68,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
           </svg>
-          <span>Consultation ends at {{ consultation?.endTime }}. After that, you have 1 week to chat.</span>
+          <span>Consultation ends at {{ consultation?.endTime }}. After that, you have 1 week to chat. If no reply within 72 hours, doctor can cancel and you won't get refunded.</span>
         </div>
         <div v-else-if="consultation?.status === 'FINISHED' && isWithinOneWeek" class="info-item warning">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -92,7 +104,7 @@
             <path fill-rule="evenodd" d="M4.804 21.644A6.707 6.707 0 006 21.75a6.721 6.721 0 003.583-1.029c.774.182 1.584.279 2.417.279 5.322 0 9.75-3.97 9.75-9 0-5.03-4.428-9-9.75-9s-9.75 3.97-9.75 9c0 2.409 1.025 4.587 2.674 6.192.232.226.277.428.254.543a3.73 3.73 0 01-.814 1.686.75.75 0 00.44 1.223zM8.25 10.875a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM10.875 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875-1.125a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25z" clip-rule="evenodd" />
           </svg>
           <h3>No messages yet</h3>
-          <p>Start the conversation with {{ consultation?.patient?.user?.firstName }} {{ consultation?.patient?.user?.lastName }}</p>
+          <p>Start the conversation with Dr. {{ consultation?.doctor?.user?.lastName }}</p>
         </div>
 
         <div v-else>
@@ -169,6 +181,69 @@
         </button>
       </div>
     </div>
+
+    <!-- Rating Modal -->
+    <div v-if="showRatingModal" class="modal-overlay" @click.self="closeRatingModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Rate Your Consultation</h3>
+          <button class="modal-close" @click="closeRatingModal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="doctor-rating-info">
+            <img :src="consultation?.doctor?.user?.profileImage || defaultDoctorImage" :alt="consultation?.doctor?.user?.firstName" class="rating-doctor-img">
+            <div>
+              <h4>Dr. {{ consultation?.doctor?.user?.firstName }} {{ consultation?.doctor?.user?.lastName }}</h4>
+              <p>How was your consultation?</p>
+            </div>
+          </div>
+
+          <div class="rating-stars">
+            <div 
+              v-for="star in 5" 
+              :key="star"
+              :class="['star', { filled: star <= ratingValue }]"
+              @click="ratingValue = star"
+              @mouseenter="hoverRating = star"
+              @mouseleave="hoverRating = 0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="review">Write a review (optional)</label>
+            <textarea 
+              id="review"
+              v-model="reviewText"
+              placeholder="Share your experience with this doctor..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button class="modal-btn secondary" @click="closeRatingModal">
+              Later
+            </button>
+            <button 
+              class="modal-btn primary" 
+              @click="submitRating"
+              :disabled="submittingRating || ratingValue === 0"
+            >
+              <span v-if="submittingRating" class="spinner-small"></span>
+              <span v-else>Submit Review</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -177,7 +252,7 @@ import { io } from 'socket.io-client';
 import moment from 'moment-jalaali';
 
 export default {
-  name: 'DoctorChat',
+  name: 'PatientChat',
   
   data() {
     return {
@@ -192,12 +267,16 @@ export default {
       sendingMessage: false,
       sendingFile: false,
       showConsultationInfo: false,
-      defaultPatientImage: 'https://images.unsplash.com/photo-1494790108755-2616b786d4d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
+      showRatingModal: false,
+      ratingValue: 0,
+      hoverRating: 0,
+      reviewText: '',
+      submittingRating: false,
       defaultDoctorImage: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
       apiBaseUrl: 'http://localhost:8000',
       socketUrl: 'ws://localhost:8000',
       fileToken: null,
-      isPatientOnline: false
+      isDoctorOnline: false
     }
   },
 
@@ -301,6 +380,30 @@ export default {
       }
     },
 
+    async loadConsultationDetails() {
+      try {
+        const authToken = localStorage.getItem('authToken');
+        
+        const response = await fetch(`${this.apiBaseUrl}/consultations/${this.consultationId}/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load consultation details');
+        }
+        
+        this.consultation = await response.json();
+        
+      } catch (err) {
+        console.error('Error loading consultation:', err);
+        throw err;
+      }
+    },
+
     async loadChatHistory() {
       try {
         const authToken = localStorage.getItem('authToken');
@@ -357,11 +460,12 @@ export default {
         });
       });
 
-      this.socket.on('patient_online', (data) => {
-        this.isPatientOnline = data.online;
+      this.socket.on('doctor_online', (data) => {
+        this.isDoctorOnline = data.online;
       });
 
       this.socket.on('disconnect', (reason) => {
+        alert('disconnected')
         console.log('❌ Disconnected:', reason);
         this.connected = false;
       });
@@ -495,78 +599,66 @@ export default {
       this.$router.go(-1);
     },
 
-    showPatientProfile() {
-      this.$router.push(`/patient/${this.consultation?.patient?.id}`);
+    showDoctorProfile() {
+      this.$router.push(`/doctor/${this.consultation?.doctor?.id}`);
+    },
+
+    // New method to open rating modal manually
+    openRatingModal() {
+      this.ratingValue = 0;
+      this.reviewText = '';
+      this.showRatingModal = true;
+    },
+
+    closeRatingModal() {
+      this.showRatingModal = false;
+      this.ratingValue = 0;
+      this.reviewText = '';
+    },
+
+    async submitRating() {
+      if (this.ratingValue === 0) return;
+      
+      this.submittingRating = true;
+      
+      try {
+        const authToken = localStorage.getItem('authToken');
+        
+        const response = await fetch(`${this.apiBaseUrl}/reviews/${this.consultationId}/review/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            rating: this.ratingValue,
+            comment: this.reviewText
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to submit rating');
+        }
+        
+        // Mark as rated to hide the rating button
+        if (this.consultation) {
+          this.consultation.rated = true;
+        }
+        
+        this.closeRatingModal();
+        
+      } catch (err) {
+        console.error('Error submitting rating:', err);
+        alert('Failed to submit rating. Please try again.');
+      } finally {
+        this.submittingRating = false;
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-/* Add these new styles for patient info */
-.patient-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 12px;
-  transition: background 0.2s ease;
-}
-
-.patient-info:hover {
-  background: #f7f9fc;
-}
-
-.patient-avatar {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-}
-
-.patient-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 2px solid #667eea;
-}
-
-.patient-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.patient-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: #2d3748;
-  margin: 0 0 4px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.online-status {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid white;
-  background: #a0aec0;
-}
-
-.online-status.online {
-  background: #48bb78;
-}
-
-/* Rest of your existing styles remain the same */
-/* ... (keep all your existing styles from the original file) ... */
-
 /* Add rating button specific styles */
 .rating-btn {
   color: #ffd700;

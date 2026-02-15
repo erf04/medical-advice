@@ -551,7 +551,7 @@ export default {
     async fetchWalletBalance() {
       try {
         const authToken = localStorage.getItem('authToken')
-        
+        console.log(this.doctorId)
         // Use doctor ID in path parameter
         const response = await fetch(`${this.apiBaseUrl}/wallet/${this.doctorId}/`, {
           method: 'GET',
